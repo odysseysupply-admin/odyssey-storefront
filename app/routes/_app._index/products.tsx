@@ -1,3 +1,7 @@
 export default function Products() {
-  return <div>This is the products section</div>;
+  return (
+    <section>
+      <h1>All Products</h1>
+    </section>
+  );
 }
