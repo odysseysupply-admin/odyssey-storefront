@@ -29,7 +29,7 @@ export default function Navbar() {
   const [openMenu, setOpenMenu] = useState(false);
 
   return (
-    <header className='flex items-center  justify-between h-[72px] px-4 bg-foreground text-white sm:px-8'>
+    <header className='flex items-center  justify-between h-[72px] px-4 bg-foreground text-white sm:px-8 border-b sticky top-0 z-50'>
       {/* Mobile Menu */}
       <Sheet open={openMenu} onOpenChange={setOpenMenu}>
         <SheetTrigger className='block lg:hidden'>

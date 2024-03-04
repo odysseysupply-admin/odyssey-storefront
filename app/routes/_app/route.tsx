@@ -4,7 +4,7 @@ import Navbar from '~/routes/_app/navbar.';
 
 export default function Index() {
   return (
-    <div>
+    <div className='relative'>
       {/* <AnnouncementBar /> */}
       <Navbar />
       <Outlet />
