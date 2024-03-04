@@ -1,86 +1,119 @@
 import { Link } from '@remix-run/react';
+import { useState } from 'react';
+import { Sheet, SheetContent, SheetTrigger } from '~/components/ui/sheet';
+
+const NavLinks = [
+  {
+    name: 'Home',
+    link: '/',
+  },
+  {
+    name: 'Shop',
+    link: '#products',
+  },
+  {
+    name: 'About',
+    link: '/about',
+  },
+  {
+    name: 'FAQ',
+    link: '/faq',
+  },
+  {
+    name: 'Size Chart',
+    link: '/size-chart',
+  },
+];
 
 export default function Navbar() {
+  const [openMenu, setOpenMenu] = useState(false);
+
   return (
-    <header>
+    <header className='flex items-center  justify-between h-[72px] px-4 bg-foreground text-white sm:px-8'>
+      {/* Mobile Menu */}
+      <Sheet open={openMenu} onOpenChange={setOpenMenu}>
+        <SheetTrigger className='block lg:hidden'>
+          <img
+            src='/icons/menu.svg'
+            alt='hambuger menu'
+            width={32}
+            className='mr-[40px]'
+          />
+        </SheetTrigger>
+        <SheetContent side='left'>
+          <nav className='mt-4 h-full'>
+            <ul className='h-full flex flex-col items-center justify-center gap-6'>
+              {NavLinks.map(({ name, link }) => {
+                return (
+                  <li key={name} className='text-lg'>
+                    <Link to={link} onClick={() => setOpenMenu(false)}>
+                      {name}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+        </SheetContent>
+      </Sheet>
+
       <Link to='/'>
-        <img src='/img/logo.png' alt='' width={64} />
-        <div>Oddysey Supply Co.</div>
+        <div className='flex items-center gap-2'>
+          <img src='/img/logo.png' alt='' width={48} />
+          <p className='hidden lg:block font-bold text-2xl'>
+            Oddysey Supply Co.
+          </p>
+        </div>
       </Link>
-      <nav>
-        <ul>
-          <Link to='/'>
-            <li>Home</li>
-          </Link>
-          <Link to='#products'>
-            <li>Shop</li>
-          </Link>
-          <Link to='about'>
-            <li>About</li>
-          </Link>
-          <Link to='faq'>
-            <li>FAQ</li>
-          </Link>
-          <Link to='size-chart'>
-            <li>Size Chart</li>
-          </Link>
+
+      {/* Desktop Menu */}
+      <nav className='hidden lg:block'>
+        <ul className='flex gap-8'>
+          {NavLinks.map(({ name, link }) => {
+            return (
+              <li key={name} className='tracking-tight'>
+                <Link to={link}>{name}</Link>
+              </li>
+            );
+          })}
 
           {/* Search Icon */}
           <li>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              width='24'
-              height='24'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='currentColor'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              className='lucide lucide-search'>
-              <circle cx='11' cy='11' r='8' />
-              <path d='m21 21-4.3-4.3' />
-            </svg>
+            <img src='/icons/search.svg' alt='search icon' />
           </li>
 
           {/* Account Icon */}
           <li>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              width='24'
-              height='24'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='currentColor'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              className='lucide lucide-user-round'>
-              <circle cx='12' cy='8' r='5' />
-              <path d='M20 21a8 8 0 0 0-16 0' />
-            </svg>
+            <img src='/icons/user-round.svg' alt='account icon' />
           </li>
 
           {/* Shopping Cart */}
-          <Link to='cart'>
-            <li>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                width='24'
-                height='24'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='currentColor'
-                strokeWidth='2'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                className='lucide lucide-shopping-cart'>
-                <circle cx='8' cy='21' r='1' />
-                <circle cx='19' cy='21' r='1' />
-                <path d='M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12' />
-              </svg>
-            </li>
-          </Link>
+          <li>
+            <Link to='cart'>
+              <img src='/icons/shopping-cart.svg' alt='' />
+            </Link>
+          </li>
+        </ul>
+      </nav>
+
+      {/* Mobile Menu Extension */}
+      <nav className='lg:hidden'>
+        <ul className='flex gap-2'>
+          {/* Account Icon */}
+          <li>
+            <img src='/icons/user-round.svg' alt='account icon' width={32} />
+          </li>
+
+          {/* Shopping Cart */}
+          <li>
+            <Link to='cart'>
+              <img
+                src='/icons/shopping-cart.svg'
+                alt='shopping cart icon'
+                width={32}
+              />
+            </Link>
+          </li>
         </ul>
       </nav>
     </header>
