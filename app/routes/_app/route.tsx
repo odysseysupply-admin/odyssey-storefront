@@ -9,6 +9,10 @@ export default function Index() {
       <Navbar />
       <Outlet />
       <Footer />
+
+      <div className='p-4 font-bold text-lg tracking-tighter flex gap-2 items-center justify-center'>
+        Powered by Chupify <img src='/icons/coffee.svg' alt='coffee icon' />
+      </div>
     </div>
   );
 }

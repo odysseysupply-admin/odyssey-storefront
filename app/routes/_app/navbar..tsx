@@ -9,7 +9,7 @@ const NavLinks = [
   },
   {
     name: 'Shop',
-    link: '#products',
+    link: '/#products',
   },
   {
     name: 'About',

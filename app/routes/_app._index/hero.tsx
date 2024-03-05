@@ -8,7 +8,7 @@ import {
 
 export default function Hero() {
   return (
-    <section className='relative w-full'>
+    <section className='relative w-full mb-8 lg:mb-16'>
       {/* Carousel Content for Desktop */}
       <Carousel
         className='hidden lg:block'
