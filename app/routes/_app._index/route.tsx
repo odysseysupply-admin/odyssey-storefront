@@ -1,3 +1,4 @@
+import FAQ from '~/routes/_app._index/faq';
 import Hero from '~/routes/_app._index/hero';
 import Products from '~/routes/_app._index/products';
 
@@ -17,6 +18,7 @@ export default function Home() {
     <div>
       <Hero />
       <Products />
+      <FAQ />
     </div>
   );
 }
