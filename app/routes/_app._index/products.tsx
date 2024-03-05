@@ -3,11 +3,24 @@ import { Link } from '@remix-run/react';
 
 type Props = {
   products: PricedProduct[];
+  currencyCode: string;
+  countryCode: string;
 };
 
 // TODO: FIX DATA FOR TESTING
-const Product = ({ product }: { product: PricedProduct }) => {
-  const { title, thumbnail, id } = product;
+// TODO: PRICE
+const Product = ({
+  product,
+  currencyCode,
+  countryCode,
+}: {
+  product: PricedProduct;
+  currencyCode: string;
+  countryCode: string;
+}) => {
+  const { title, thumbnail, id, variants } = product;
+  const price = Number(variants ? variants[0].calculated_price : 0) / 100;
+
   const titleURL = title.replace(/\s+/g, '-').toLowerCase();
   return (
     <Link
@@ -24,13 +37,23 @@ const Product = ({ product }: { product: PricedProduct }) => {
         <h3 className='underline  text-lg font-bold'>
           {title || 'Medusa Mangum Opus'}
         </h3>
-        <p className='tracking-wider text-stone-800'>Php 150.00</p>
+        <p className='tracking-wider text-stone-800'>
+          {new Intl.NumberFormat(countryCode, {
+            style: 'currency',
+            currencyDisplay: 'symbol',
+            currency: currencyCode,
+          }).format(price)}
+        </p>
       </div>
     </Link>
   );
 };
 
-export default function Products({ products }: Props) {
+export default function Products({
+  products,
+  currencyCode,
+  countryCode,
+}: Props) {
   return (
     <section
       className='mb-24 px-4 lg:px-8 max-w-[1110px] mx-auto'
@@ -41,7 +64,12 @@ export default function Products({ products }: Props) {
 
       <div className='grid gap-y-10 md:grid-cols-2 md:gap-x-10  lg:grid-cols-3 mb-4'>
         {products.map((product) => (
-          <Product product={product} key={product.id} />
+          <Product
+            product={product}
+            key={product.id}
+            countryCode={countryCode}
+            currencyCode={currencyCode}
+          />
         ))}
       </div>
     </section>
