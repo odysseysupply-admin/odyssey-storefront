@@ -1,6 +1,6 @@
 export default function SizeChart() {
   return (
-    <section className='h-[100vh]'>
+    <section className='min-h-[100vh]'>
       <img
         width={800}
         src='/img/size-chart.jpg'

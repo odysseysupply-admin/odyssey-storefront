@@ -13,7 +13,6 @@ const medusa = new Medusa({
 
 export const getProductsList = async () => {
   const { products } = await medusa.products.list({
-    fields: 'title,thumbnail',
     currency_code: 'php',
   });
 
@@ -22,4 +21,24 @@ export const getProductsList = async () => {
   }
 
   return products;
+};
+
+export const getProduct = async (productId: string) => {
+  const { product } = await medusa.products.retrieve(productId);
+
+  if (!product) {
+    throw new Error('Unable to fetch Product');
+  }
+
+  return product;
+};
+
+// TODO: Change to accept multi region
+export const getRegions = async () => {
+  const { regions } = await medusa.regions.list();
+  if (!regions) {
+    throw new Error('Unable to fetch Regions');
+  }
+
+  return regions.find((region) => region.currency_code === 'php');
 };
