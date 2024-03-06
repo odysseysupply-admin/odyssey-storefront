@@ -32,6 +32,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   );
 };
 
+// TODO: PRICING FOR SALES
+
 export default function Home() {
   const { products, currencyCode, countryCode } =
     useLoaderData<typeof loader>();
@@ -40,7 +42,7 @@ export default function Home() {
     <div>
       <Hero />
       <Products
-        products={products as PricedProduct[]}
+        products={products as unknown as PricedProduct[]}
         currencyCode={currencyCode}
         countryCode={countryCode}
       />

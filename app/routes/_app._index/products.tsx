@@ -1,5 +1,6 @@
-import type { PricedProduct } from '@medusajs/client-types';
+import type { PricedProduct, PricedVariant } from '@medusajs/client-types';
 import { Link } from '@remix-run/react';
+import { formatPrice } from '~/lib/products';
 
 type Props = {
   products: PricedProduct[];
@@ -19,8 +20,10 @@ const Product = ({
   countryCode: string;
 }) => {
   const { title, thumbnail, id, variants } = product;
-  const price = Number(variants ? variants[0].calculated_price : 0) / 100;
-
+  const calc_prices = variants?.map((v: PricedVariant) =>
+    v.calculated_price ? v.calculated_price : 0
+  );
+  const price = Number(calc_prices ? Math.min(...calc_prices) : 0) / 100;
   const titleURL = title.replace(/\s+/g, '-').toLowerCase();
   return (
     <Link
@@ -38,11 +41,11 @@ const Product = ({
           {title || 'Medusa Mangum Opus'}
         </h3>
         <p className='tracking-wider text-stone-800'>
-          {new Intl.NumberFormat(countryCode, {
-            style: 'currency',
-            currencyDisplay: 'symbol',
-            currency: currencyCode,
-          }).format(price)}
+          {formatPrice({
+            countryCode,
+            currencyCode,
+            price,
+          })}
         </p>
       </div>
     </Link>
@@ -55,9 +58,7 @@ export default function Products({
   countryCode,
 }: Props) {
   return (
-    <section
-      className='mb-24 px-4 lg:px-8 max-w-[1110px] mx-auto'
-      id='products'>
+    <section className='mb-24 px-4 lg:px-8 max-w-5xl mx-auto' id='products'>
       <h1 className='text-center text-3xl  mb-4 lg:text-4xl underline py-4 text-slate-700 tracking-wider'>
         ALL PRODUCTS
       </h1>

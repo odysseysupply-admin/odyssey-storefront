@@ -10,7 +10,7 @@ export default function Index() {
       <Outlet />
       <Footer />
 
-      <div className='p-4 font-bold text-lg tracking-tighter flex gap-2 items-center justify-center'>
+      <div className='p-2 text-sm tracking-tighter flex gap-2 items-center justify-center'>
         Powered by Chupify <img src='/icons/coffee.svg' alt='coffee icon' />
       </div>
     </div>
