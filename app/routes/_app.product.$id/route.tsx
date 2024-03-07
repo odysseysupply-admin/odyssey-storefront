@@ -1,5 +1,5 @@
-import { LoaderFunctionArgs } from '@remix-run/node';
-import { useLoaderData, useSearchParams } from '@remix-run/react';
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from '@remix-run/node';
+import { Form, useLoaderData, useSearchParams } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { Button } from '~/components/ui/button';
 import {
@@ -9,7 +9,7 @@ import {
 } from '~/components/ui/carousel';
 import { Input } from '~/components/ui/input';
 import { medusa_cookie } from '~/lib/cookies';
-import { getProduct } from '~/lib/medusa.server';
+import { addLineItemToCart, createCart, getProduct } from '~/lib/medusa.server';
 import { formatPrice } from '~/lib/products';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -34,6 +34,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 //TODO: OPTIONS CURRENTLY HARDCODED
 //TODO: PRICE CURRENTLY HARDCODED
+//TODO: FIX VARIANTS AUTO
 
 const getStockStatus = (stock: number) => {
   if (stock === 0) return 'SOLD OUT';
@@ -76,10 +77,10 @@ export default function ProductPage() {
     };
   }, {});
   const productVariantPricingMapkeys = Object.keys(productVariantPricingMap);
-  const currentVariantStock =
-    productVariantPricingMap[currentVariantKey]?.stocks;
+  const currentVariantObj = productVariantPricingMap[currentVariantKey];
+  const currentVariantStock = currentVariantObj?.stocks;
 
-  const [quantity, setQuantity] = useState(0);
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     if (!searchParams.get('variant')) {
@@ -95,17 +96,20 @@ export default function ProductPage() {
     }
   }, []);
 
+  if (!searchParams.get('variant')) return <div className='h-[100vh]'></div>;
+
   return (
-    <section className='min-h-[100vh] mb-32 w-full px-4'>
+    <section className='min-h-[100vh] mb-32 w-full '>
       <div className='grid  max-w-5xl md:mt-16'>
         <Carousel>
           <CarouselContent className='h-[350px] max-w-[45p] px-4'>
             {productImages.map((imgURL, index) => (
               <CarouselItem key={index}>
                 <img
-                  src={imgURL!}
+                  // src={imgURL!}
+                  src='/img/shirt1.jpg'
                   alt=''
-                  className='w-full h-full object-contain md:object-contain'
+                  className='w-full h-full object-contain md:object-contain px-4'
                 />
               </CarouselItem>
             ))}
@@ -115,7 +119,7 @@ export default function ProductPage() {
         <div>
           <h1>{title}</h1>
           <p>{description}</p>
-          <p>{productVariantPricingMap[currentVariantKey]?.price}</p>
+          <p>{currentVariantObj?.price}</p>
         </div>
 
         <div>
@@ -203,15 +207,58 @@ export default function ProductPage() {
         </div>
 
         <div>
-          <Button
-            variant='default'
-            className='flex items-center justify-center gap-2'>
-            Add to Cart
-            <img src='/icons/shopping-cart.svg' className='h-4 w-4' alt='' />
-          </Button>
+          <Form method='POST' onSubmit={() => setQuantity(1)}>
+            <input
+              hidden
+              name='variantId'
+              value={currentVariantObj.variantId}
+              readOnly
+            />
+            <input hidden name='quantity' value={quantity} readOnly />
+            <Button
+              disabled={quantity === 0}
+              type='submit'
+              variant='default'
+              className='flex items-center justify-center gap-2'>
+              Add to Cart
+              <img src='/icons/shopping-cart.svg' className='h-4 w-4' alt='' />
+            </Button>
+          </Form>
           <Button variant='secondary'>Buy Now!</Button>
         </div>
       </div>
     </section>
   );
 }
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const cookieHeader = request.headers.get('Cookie');
+  const cookie = (await medusa_cookie.parse(cookieHeader)) || {};
+
+  let cartId = cookie.cartId;
+
+  if (!cartId) {
+    const { cartId: id } = await createCart(cookie.region_id);
+    cartId = id;
+
+    cookie.cartId = id;
+  }
+
+  const formData = await request.formData();
+  const data = Object.fromEntries(formData);
+  const { variantId, quantity } = data as {
+    variantId: string;
+    quantity: string;
+  };
+
+  await addLineItemToCart(cartId, variantId, quantity);
+
+  return json(
+    { ok: true },
+    {
+      headers: {
+        'Set-Cookie': await medusa_cookie.serialize(cookie),
+      },
+    }
+  );
+};

@@ -1,6 +1,7 @@
 import { Link } from '@remix-run/react';
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '~/components/ui/sheet';
+import ShoppingCart from '~/routes/_app/shopping-cart';
 
 const NavLinks = [
   {
@@ -89,9 +90,7 @@ export default function Navbar() {
 
           {/* Shopping Cart */}
           <li>
-            <Link to='cart'>
-              <img src='/icons/shopping-cart.svg' alt='' />
-            </Link>
+            <ShoppingCart />
           </li>
         </ul>
       </nav>
@@ -106,13 +105,7 @@ export default function Navbar() {
 
           {/* Shopping Cart */}
           <li>
-            <Link to='cart'>
-              <img
-                src='/icons/shopping-cart.svg'
-                alt='shopping cart icon'
-                width={32}
-              />
-            </Link>
+            <ShoppingCart width={32} />
           </li>
         </ul>
       </nav>

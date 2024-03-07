@@ -11,6 +11,7 @@ const medusa = new Medusa({
   maxRetries: 3,
 });
 
+// PRODUCTS
 export const getProductsList = async () => {
   const { products } = await medusa.products.list({
     currency_code: 'php',
@@ -33,12 +34,56 @@ export const getProduct = async (productId: string) => {
   return product;
 };
 
+// REGIONS
+
 // TODO: Change to accept multi region
 export const getRegions = async () => {
   const { regions } = await medusa.regions.list();
+
   if (!regions) {
     throw new Error('Unable to fetch Regions');
   }
 
   return regions.find((region) => region.currency_code === 'php');
+};
+
+// CARTS2
+
+export const createCart = async (regionId: string) => {
+  const { cart } = await medusa.carts.create({
+    region_id: regionId,
+  });
+
+  if (!cart) {
+    throw new Error('Unable to create cart');
+  }
+
+  return { cartId: cart.id };
+};
+
+export const addLineItemToCart = async (
+  cartId: string,
+  variantId: string,
+  quantity: string
+) => {
+  const { cart } = await medusa.carts.lineItems.create(cartId, {
+    variant_id: variantId,
+    quantity: Number(quantity),
+  });
+
+  if (!cart) {
+    throw new Error('Unable to  add items in cart');
+  }
+
+  return cart;
+};
+
+export const getCart = async (cartId: string) => {
+  const { cart } = await medusa.carts.retrieve(cartId);
+
+  if (!cart) {
+    throw new Error('Unable to retrieve cart');
+  }
+
+  return cart;
 };

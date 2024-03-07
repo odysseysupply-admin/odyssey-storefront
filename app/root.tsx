@@ -1,4 +1,5 @@
-import type { LinksFunction } from '@remix-run/node';
+import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
+import { redirect } from '@remix-run/node';
 import {
   Links,
   LiveReload,
@@ -7,12 +8,33 @@ import {
   Scripts,
   ScrollRestoration,
 } from '@remix-run/react';
+import { medusa_cookie } from '~/lib/cookies';
+import { getRegions } from '~/lib/medusa.server';
 
 import stylesheet from '~/tailwind.css';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },
 ];
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const cookieHeader = request.headers.get('Cookie');
+  const cookie = (await medusa_cookie.parse(cookieHeader)) || {};
+
+  if (cookie.region_id) return null;
+
+  const regions = await getRegions();
+
+  return redirect(request.url, {
+    headers: {
+      'Set-Cookie': await medusa_cookie.serialize({
+        region_id: regions?.id,
+        currency_code: regions?.currency_code,
+        country_code: regions?.name,
+      }),
+    },
+  });
+};
 
 export default function App() {
   return (
