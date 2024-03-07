@@ -1,13 +1,13 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from '@remix-run/node';
 import { Form, useLoaderData, useSearchParams } from '@remix-run/react';
 import { useEffect, useState } from 'react';
+import { QuantityInput } from '~/components/quantity-input';
 import { Button } from '~/components/ui/button';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
 } from '~/components/ui/carousel';
-import { Input } from '~/components/ui/input';
 import { medusa_cookie } from '~/lib/cookies';
 import { addLineItemToCart, createCart, getProduct } from '~/lib/medusa.server';
 import { formatPrice } from '~/lib/products';
@@ -159,51 +159,11 @@ export default function ProductPage() {
             Quantity: {currentVariantStock || 0}
             pcs left
           </p>
-          <div className='flex gap-4'>
-            <Input
-              className='w-32 '
-              type='text'
-              value={quantity}
-              onChange={(e) => {
-                const newQuantity = parseInt(e.target.value);
-
-                if (!newQuantity) {
-                  return setQuantity(0);
-                }
-
-                setQuantity(() => {
-                  if (newQuantity > currentVariantStock)
-                    return currentVariantStock;
-                  if (newQuantity < 0) return 0;
-                  return newQuantity;
-                });
-              }}
-            />
-            <div className='flex gap-2'>
-              <Button
-                className='w-10 text-xl font-bold'
-                disabled={quantity === 0}
-                onClick={() => {
-                  setQuantity((prev) => {
-                    if (prev === 0) return prev;
-                    return prev - 1;
-                  });
-                }}>
-                -
-              </Button>
-              <Button
-                className='w-10 text-xl font-bold'
-                disabled={quantity === currentVariantStock}
-                onClick={() => {
-                  setQuantity((prev) => {
-                    if (prev === currentVariantStock) return prev;
-                    return prev + 1;
-                  });
-                }}>
-                +
-              </Button>
-            </div>
-          </div>
+          <QuantityInput
+            quantity={quantity}
+            setQuantity={setQuantity}
+            variantStock={currentVariantStock}
+          />
         </div>
 
         <div>
@@ -235,13 +195,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const cookieHeader = request.headers.get('Cookie');
   const cookie = (await medusa_cookie.parse(cookieHeader)) || {};
 
-  let cartId = cookie.cartId;
+  let cartId = cookie.cart_id;
 
   if (!cartId) {
     const { cartId: id } = await createCart(cookie.region_id);
     cartId = id;
 
-    cookie.cartId = id;
+    cookie.cart_id = id;
   }
 
   const formData = await request.formData();

@@ -87,3 +87,30 @@ export const getCart = async (cartId: string) => {
 
   return cart;
 };
+
+// LINE ITEM
+export const deleteLineItem = async (cartId: string, lineItemId: string) => {
+  const { cart } = await medusa.carts.lineItems.delete(cartId, lineItemId);
+
+  if (!cart) {
+    throw new Error('Unable to delete line item from cart');
+  }
+
+  return cart;
+};
+
+export const updateLineItem = async (
+  cartId: string,
+  lineItemId: string,
+  quantity: number
+) => {
+  const { cart } = await medusa.carts.lineItems.update(cartId, lineItemId, {
+    quantity,
+  });
+
+  if (!cart) {
+    throw new Error('Unable to update line item from cart');
+  }
+
+  return cart;
+};

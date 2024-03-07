@@ -1,27 +1,36 @@
-import { LoaderFunctionArgs } from '@remix-run/node';
+import type { LineItem } from '@medusajs/client-types';
+import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
 import { Button } from '~/components/ui/button';
 import { medusa_cookie } from '~/lib/cookies';
-import { getCart } from '~/lib/medusa.server';
+import { deleteLineItem, getCart, updateLineItem } from '~/lib/medusa.server';
+import { CartItem } from '~/routes/_app.cart/cart-item';
+import { CartSummary } from '~/routes/_app.cart/cart-summary';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const cookieHeader = request.headers.get('Cookie');
   const cookie = (await medusa_cookie.parse(cookieHeader)) || {};
 
-  if (cookie.cartId) {
-    const cart = await getCart(cookie.cartId);
-    return { cart };
+  if (cookie.cart_id) {
+    const cart = await getCart(cookie.cart_id);
+    return {
+      cart,
+      countryCode: cookie.country_code,
+      currencyCode: cookie.currency_code,
+    };
   }
 
-  return { cart: null };
+  return {
+    cart: null,
+    countryCode: cookie.country_code,
+    currencyCode: cookie.currency_code,
+  };
 };
 
 export default function Cart() {
-  const { cart } = useLoaderData<typeof loader>();
+  const { cart, countryCode, currencyCode } = useLoaderData<typeof loader>();
 
-  console.log('cart', cart);
-
-  if (!cart)
+  if (!cart || (cart?.items && cart.items.length === 0))
     return (
       <section className='h-[100vh] px-4'>
         <div className='w-full h-full flex flex-col items-center mt-24'>
@@ -48,5 +57,66 @@ export default function Cart() {
       </section>
     );
 
-  return <section className='h-[100vh]'>Cart</section>;
+  const { items } = cart;
+
+  return (
+    <section className='h-[100vh] max-w-7xl mx-auto'>
+      <div className='grid lg:grid-cols-[1fr_360px] mt-24 px-4'>
+        <div>
+          <h2 className='text-xl font-bold mb-4'>Cart Details</h2>
+
+          <table className='table-auto w-full'>
+            <thead className='border-b border-slate-700 '>
+              <tr>
+                <th className='text-left font-bold text-slate-600 text-xl'>
+                  Items
+                </th>
+                <th className='text-left font-bold text-slate-600 text-xl hidden md:table-cell'>
+                  Quantity
+                </th>
+                <th className='text-left font-bold text-slate-600 text-xl'>
+                  Total
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <CartItem
+                  key={item.id}
+                  item={item as unknown as LineItem}
+                  currencyCode={currencyCode}
+                  countryCode={countryCode}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <CartSummary />
+      </div>
+    </section>
+  );
 }
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const cookieHeader = request.headers.get('Cookie');
+  const cookie = (await medusa_cookie.parse(cookieHeader)) || {};
+
+  const formData = await request.formData();
+  const data = Object.fromEntries(formData);
+
+  switch (request.method) {
+    case 'POST': {
+      await updateLineItem(
+        cookie.cart_id,
+        data.lineItemId as string,
+        Number(data.quantity)
+      );
+      return { ok: true };
+    }
+
+    case 'DELETE': {
+      await deleteLineItem(cookie.cart_id, data.lineItemId as string);
+      return { ok: true };
+    }
+  }
+};
