@@ -62,7 +62,7 @@ export default function Cart() {
   return (
     <section className='h-[100vh] max-w-7xl mx-auto'>
       <div className='grid lg:grid-cols-[1fr_360px] mt-24 px-4'>
-        <div>
+        <div className='mb-8 lg:mb-0'>
           <h2 className='text-xl font-bold mb-4'>Cart Details</h2>
 
           <table className='table-auto w-full'>
@@ -91,7 +91,13 @@ export default function Cart() {
             </tbody>
           </table>
         </div>
-        <CartSummary />
+        <CartSummary
+          subTotal={cart.subtotal}
+          taxTotal={cart.tax_total}
+          total={cart.total}
+          currencyCode={currencyCode}
+          countryCode={countryCode}
+        />
       </div>
     </section>
   );

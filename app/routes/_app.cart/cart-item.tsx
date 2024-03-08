@@ -3,7 +3,7 @@ import { Form } from '@remix-run/react';
 import { useState } from 'react';
 import { QuantityInput } from '~/components/quantity-input';
 import { Button } from '~/components/ui/button';
-import { formatPrice } from '~/lib/products';
+import { formatAmount } from '~/lib/products';
 
 type Props = {
   item: LineItem;
@@ -69,10 +69,10 @@ export const CartItem = ({ item, currencyCode, countryCode }: Props) => {
           <div className='ml-2 self-start mt-2 tracking-tight flex flex-col justify-center md:self-center leading-none '>
             <p className='text-lg font-bold'>{item.title}</p>
             <p className='text-slate-600'>
-              {formatPrice({
+              {formatAmount({
                 countryCode,
                 currencyCode,
-                price: item.unit_price / 100,
+                amount: item.unit_price / 100,
               })}
             </p>
             <p className='text-slate-600'>Variant: {item.description}</p>
@@ -102,10 +102,10 @@ export const CartItem = ({ item, currencyCode, countryCode }: Props) => {
 
       {/* Total */}
       <td className='pr-2'>
-        {formatPrice({
+        {formatAmount({
           countryCode,
           currencyCode,
-          price: (item.subtotal || 0) / 100,
+          amount: (item.subtotal || 0) / 100,
         })}
       </td>
     </tr>

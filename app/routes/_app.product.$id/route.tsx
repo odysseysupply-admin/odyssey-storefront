@@ -10,7 +10,7 @@ import {
 } from '~/components/ui/carousel';
 import { medusa_cookie } from '~/lib/cookies';
 import { addLineItemToCart, createCart, getProduct } from '~/lib/medusa.server';
-import { formatPrice } from '~/lib/products';
+import { formatAmount } from '~/lib/products';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { searchParams } = new URL(request.url);
@@ -70,7 +70,11 @@ export default function ProductPage() {
       ...acc,
       [value]: {
         variantId: id,
-        price: formatPrice({ countryCode, currencyCode, price: amount / 100 }),
+        price: formatAmount({
+          countryCode,
+          currencyCode,
+          amount: amount / 100,
+        }),
         stocks: inventory_quantity || 0,
         stockStatus: getStockStatus(inventory_quantity || 0),
       },

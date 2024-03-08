@@ -1,6 +1,6 @@
 import type { PricedProduct, PricedVariant } from '@medusajs/client-types';
 import { Link } from '@remix-run/react';
-import { formatPrice } from '~/lib/products';
+import { formatAmount } from '~/lib/products';
 
 type Props = {
   products: PricedProduct[];
@@ -41,10 +41,10 @@ const Product = ({
           {title || 'Medusa Mangum Opus'}
         </h3>
         <p className='tracking-wider text-stone-800'>
-          {formatPrice({
+          {formatAmount({
             countryCode,
             currencyCode,
-            price,
+            amount: price,
           })}
         </p>
       </div>

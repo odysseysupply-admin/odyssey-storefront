@@ -1,15 +1,15 @@
-export const formatPrice = ({
+export const formatAmount = ({
   countryCode,
   currencyCode,
-  price,
+  amount,
 }: {
   countryCode: string;
   currencyCode: string;
-  price: number;
+  amount: number;
 }) => {
   return new Intl.NumberFormat(countryCode, {
     style: 'currency',
     currencyDisplay: 'symbol',
     currency: currencyCode,
-  }).format(price);
+  }).format(amount);
 };
