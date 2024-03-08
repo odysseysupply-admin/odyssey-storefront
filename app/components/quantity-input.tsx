@@ -19,11 +19,12 @@ export const QuantityInput = ({
       <div className='flex'>
         <Button
           variant='outline'
-          className='w-10 text-xl font-bold rounded-none rounded-l-sm border-r-0'
-          disabled={quantity === 1}
+          className={`w-10 text-xl font-bold rounded-none rounded-l-sm border-r-0 ${
+            quantity === 1 ? 'pointer-events-none opacity-50' : ''
+          }`}
           onClick={() => {
             setQuantity((prev) => {
-              if (prev === 0) return 1;
+              if (prev === 1) return 1;
               return prev - 1;
             });
           }}>
@@ -31,7 +32,7 @@ export const QuantityInput = ({
         </Button>
         <Input
           readOnly={isReadOnly}
-          className='w-12 rounded-none border-x-0 text-center'
+          className='w-12 rounded-none border-x-0 text-center '
           type='text'
           value={quantity}
           onChange={(e) => {
@@ -52,8 +53,9 @@ export const QuantityInput = ({
         />
         <Button
           variant='outline'
-          className='w-10 text-xl font-bold rounded-none rounded-e-sm border-l-0'
-          disabled={quantity === variantStock}
+          className={`w-10 text-xl font-bold rounded-none rounded-e-sm border-l-0 ${
+            quantity === variantStock ? 'pointer-events-none opacity-50' : ''
+          }`}
           onClick={() => {
             setQuantity((prev) => {
               if (prev === variantStock) return prev;

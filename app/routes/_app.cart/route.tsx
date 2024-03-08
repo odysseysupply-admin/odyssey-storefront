@@ -106,6 +106,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   switch (request.method) {
     case 'POST': {
+      console.log(data);
       await updateLineItem(
         cookie.cart_id,
         data.lineItemId as string,

@@ -21,7 +21,6 @@ const LineItemQuantityInput = ({
   lineItemId: string;
 }) => {
   const [quantity, setQuantity] = useState(itemQuantity);
-
   return (
     <>
       <Form method='DELETE'>
@@ -36,7 +35,7 @@ const LineItemQuantityInput = ({
           <img src='/icons/trash-2.svg' alt='' className='h-4 w-4' />
         </Button>
       </Form>
-      <Form method='POST' onChange={() => console.log('changing')}>
+      <Form method='POST'>
         <input
           type='text'
           hidden
