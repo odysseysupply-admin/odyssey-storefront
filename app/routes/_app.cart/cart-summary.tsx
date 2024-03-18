@@ -1,3 +1,4 @@
+import { Link } from '@remix-run/react';
 import { useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
@@ -119,7 +120,9 @@ export const CartSummary = ({
         </p>
       </div>
 
-      <Button className='w-full'>Go to checkout</Button>
+      <Link to='/checkout'>
+        <Button className='w-full'>Go to checkout</Button>
+      </Link>
     </div>
   );
 };

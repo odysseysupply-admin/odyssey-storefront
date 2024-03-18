@@ -1,4 +1,5 @@
 import Medusa from '@medusajs/medusa-js';
+import type { DeliveryInformationType } from '~/lib/types';
 
 if (!process.env.MEDUSA_BACKEND_URL) {
   throw new Error(
@@ -84,6 +85,52 @@ export const getCart = async (cartId: string) => {
   if (!cart) {
     throw new Error('Unable to retrieve cart');
   }
+
+  return cart;
+};
+
+export const updateDeliveryInformation = async (
+  cartId: string,
+  data: DeliveryInformationType
+) => {
+  const {
+    first_name,
+    last_name,
+    address,
+    city,
+    province,
+    postal_code,
+    phone,
+    country_code,
+    email,
+  } = data;
+  const { cart } = await medusa.carts.update(cartId, {
+    // adds email for guest customer
+    // TODO: email for signed up customer
+    email,
+    shipping_address: {
+      first_name,
+      last_name,
+      address_1: address,
+      city,
+      country_code,
+      province,
+      postal_code,
+      phone,
+    },
+    billing_address: {
+      first_name,
+      last_name,
+      address_1: address,
+      city,
+      country_code,
+      province,
+      postal_code,
+      phone,
+    },
+  });
+
+  if (!cart) throw new Error('Unable to update delivery information');
 
   return cart;
 };

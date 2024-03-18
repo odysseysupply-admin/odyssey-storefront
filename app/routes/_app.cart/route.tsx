@@ -15,20 +15,16 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     const cart = await getCart(cookie.cart_id);
     return {
       cart,
-      countryCode: cookie.country_code,
-      currencyCode: cookie.currency_code,
     };
   }
 
   return {
     cart: null,
-    countryCode: cookie.country_code,
-    currencyCode: cookie.currency_code,
   };
 };
 
 export default function Cart() {
-  const { cart, countryCode, currencyCode } = useLoaderData<typeof loader>();
+  const { cart } = useLoaderData<typeof loader>();
 
   if (!cart || (cart?.items && cart.items.length === 0))
     return (
@@ -57,12 +53,13 @@ export default function Cart() {
       </section>
     );
 
-  const { items } = cart;
+  const { items, region } = cart;
+  const { name: countryCode, currency_code: currencyCode } = region;
 
   return (
-    <section className='h-[100vh] max-w-7xl mx-auto'>
+    <section className='max-w-7xl mx-auto mt-32 mb-48'>
       <div className='grid lg:grid-cols-[1fr_360px] mt-24 px-4'>
-        <div className='mb-8 lg:mb-0'>
+        <div className='mb-8 lg:mb-0 lg:mr-4'>
           <h2 className='text-xl font-bold mb-4'>Cart Details</h2>
 
           <table className='table-auto w-full'>

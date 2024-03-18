@@ -62,7 +62,7 @@ export default function Navbar() {
         <div className='flex items-center gap-2'>
           <img src='/img/logo.png' alt='' width={48} />
           <p className='hidden lg:block font-bold text-2xl'>
-            Oddysey Supply Co.
+            Odyssey Supply Co.
           </p>
         </div>
       </Link>

@@ -1,5 +1,5 @@
 import type { LineItem } from '@medusajs/client-types';
-import { Form } from '@remix-run/react';
+import { useFetcher } from '@remix-run/react';
 import { useState } from 'react';
 import { QuantityInput } from '~/components/quantity-input';
 import { Button } from '~/components/ui/button';
@@ -20,10 +20,11 @@ const LineItemQuantityInput = ({
   itemQuantity: number;
   lineItemId: string;
 }) => {
+  const fetcher = useFetcher();
   const [quantity, setQuantity] = useState(itemQuantity);
   return (
     <>
-      <Form method='DELETE'>
+      <fetcher.Form method='DELETE'>
         <input
           type='text'
           hidden
@@ -34,8 +35,8 @@ const LineItemQuantityInput = ({
         <Button variant='outline' size='sm'>
           <img src='/icons/trash-2.svg' alt='' className='h-4 w-4' />
         </Button>
-      </Form>
-      <Form method='POST'>
+      </fetcher.Form>
+      <fetcher.Form method='POST'>
         <input
           type='text'
           hidden
@@ -50,7 +51,7 @@ const LineItemQuantityInput = ({
           setQuantity={setQuantity}
           variantStock={variantStock}
         />
-      </Form>
+      </fetcher.Form>
     </>
   );
 };
