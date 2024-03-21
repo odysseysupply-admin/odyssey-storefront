@@ -3,14 +3,11 @@ import { Form, useLoaderData, useSearchParams } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { QuantityInput } from '~/components/quantity-input';
 import { Button } from '~/components/ui/button';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from '~/components/ui/carousel';
+
 import { medusa_cookie } from '~/lib/cookies';
 import { addLineItemToCart, createCart, getProduct } from '~/lib/medusa.server';
 import { formatAmount } from '~/lib/products';
+import { ProductCarousel } from '~/routes/_app.product.$id/product-carousel';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { searchParams } = new URL(request.url);
@@ -52,6 +49,9 @@ export default function ProductPage() {
 
   const { title, images, thumbnail, variants, description } = product;
   const productImages = [thumbnail, ...images!.map((img) => img.url)];
+
+  console.log(productImages);
+
   const productVariantPricingMap: {
     [key: string]: {
       variantId: string;
@@ -105,21 +105,7 @@ export default function ProductPage() {
   return (
     <section className='min-h-[100vh] mb-32 w-full '>
       <div className='grid  max-w-5xl md:mt-16'>
-        <Carousel>
-          <CarouselContent className='h-[350px] max-w-[45p] px-4'>
-            {productImages.map((imgURL, index) => (
-              <CarouselItem key={index}>
-                <img
-                  // src={imgURL!}
-                  src='/img/shirt1.jpg'
-                  alt=''
-                  className='w-full h-full object-contain md:object-contain px-4'
-                />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
-
+        <ProductCarousel productImages={productImages as unknown as string[]} />
         <div>
           <h1>{title}</h1>
           <p>{description}</p>
