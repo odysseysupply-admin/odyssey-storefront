@@ -6,6 +6,7 @@ type Props = {
   setQuantity: React.Dispatch<React.SetStateAction<number>>;
   variantStock: number;
   isReadOnly?: boolean;
+  full?: boolean;
 };
 
 export const QuantityInput = ({
@@ -13,13 +14,14 @@ export const QuantityInput = ({
   setQuantity,
   variantStock,
   isReadOnly = false,
+  full = false,
 }: Props) => {
   return (
     <div>
       <div className='flex'>
         <Button
           variant='outline'
-          className={`w-10 text-xl font-bold rounded-none rounded-l-sm border-r-0 ${
+          className={`w-10 text-xl font-bold rounded-none rounded-l-sm border-r-0 border-slate-700 ${
             quantity === 1 ? 'pointer-events-none opacity-50' : ''
           }`}
           onClick={() => {
@@ -32,7 +34,9 @@ export const QuantityInput = ({
         </Button>
         <Input
           readOnly={isReadOnly}
-          className='w-12 rounded-none border-x-0 text-center '
+          className={`rounded-none border-x-0 text-center ${
+            full ? 'w-full' : 'w-12'
+          }`}
           type='text'
           value={quantity}
           onChange={(e) => {

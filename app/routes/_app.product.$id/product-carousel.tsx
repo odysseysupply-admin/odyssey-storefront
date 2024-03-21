@@ -40,26 +40,26 @@ export function ProductCarousel({ productImages }: Props) {
 
   return (
     <>
-      <Carousel setApi={setMainApi}>
-        <CarouselContent className='h-[350px] max-w-[45p] px-4'>
+      <Carousel setApi={setMainApi} className='mb-8'>
+        <CarouselContent className='h-[350px] px-4'>
           {productImages.map((imgURL, index) => (
             <CarouselItem key={index}>
               <img
                 src={imgURL}
                 alt='Product Images'
-                className='w-full h-full object-contain md:object-contain px-4'
+                className='w-full h-full object-contain md:object-contain px-4  mx-2'
               />
             </CarouselItem>
           ))}
         </CarouselContent>
       </Carousel>
       <Carousel setApi={setThumbApi}>
-        <CarouselContent className='h-[350px] max-w-[45p] px-4'>
+        <CarouselContent className=' px-4'>
           {productImages.map((imgURL, index) => (
             <CarouselItem
               key={index}
               onClick={() => onThumbClick(index)}
-              className='basis-1/3'>
+              className='basis-1/3 max-h-[150px] border border-slate-300 rounded-lg mx-2 p-2 cursor-pointer'>
               <img
                 src={imgURL}
                 alt='Product Images'
