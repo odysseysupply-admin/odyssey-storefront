@@ -161,3 +161,30 @@ export const updateLineItem = async (
 
   return cart;
 };
+
+// SHIPPING
+export const getShippingOptions = async (cartId: string) => {
+  const { shipping_options: shippingOptions } =
+    await medusa.shippingOptions.listCartOptions(cartId);
+
+  if (!shippingOptions) {
+    throw new Error('Unable to get shopping options');
+  }
+
+  return shippingOptions;
+};
+
+export const addShippingMethod = async (
+  cartId: string,
+  shippingMethodId: string
+) => {
+  const { cart } = await medusa.carts.addShippingMethod(cartId, {
+    option_id: shippingMethodId,
+  });
+
+  if (!cart) {
+    throw new Error('Unable to add shopping option');
+  }
+
+  return cart;
+};

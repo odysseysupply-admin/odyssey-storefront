@@ -11,5 +11,5 @@ export const formatAmount = ({
     style: 'currency',
     currencyDisplay: 'symbol',
     currency: currencyCode,
-  }).format(amount);
+  }).format(amount / 100);
 };

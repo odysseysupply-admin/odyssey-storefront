@@ -4,69 +4,63 @@ import {
   useForm,
   type SubmissionResult,
 } from '@conform-to/react';
-import type { Address } from '@medusajs/client-types';
-import { Form } from '@remix-run/react';
-import { useState } from 'react';
+import type { Cart } from '@medusajs/client-types';
+import { Form, useSearchParams } from '@remix-run/react';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { DeliveryInformationType } from '~/lib/types';
+import { STEPS } from '~/routes/checkout/utils';
 
 export type Props = {
-  countryCode: string;
+  showForm: boolean;
+  cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
   lastResult:
     | SubmissionResult<string[]>
     | { success: boolean }
     | null
     | undefined;
-  shippingAddress: Address;
-  email: string;
 };
 
 export function DeliveryInformation(props: Props) {
-  const [showForm, setShowForm] = useState(
-    Boolean(props.shippingAddress?.first_name)
-  );
-
+  const [, setSearchParams] = useSearchParams();
   return (
     <div>
-      {showForm ? (
+      {props.showForm ? (
+        <DeliveryInformationForm {...props} />
+      ) : (
         <div>
           Hello World
-          <Button onClick={() => setShowForm(false)}>Edit Form</Button>
+          <Button
+            onClick={() =>
+              setSearchParams((prev) => {
+                prev.set('step', STEPS.DELIVERY_INFORMATION);
+                return prev;
+              })
+            }>
+            Edit
+          </Button>
         </div>
-      ) : (
-        <DeliveryInformationForm {...props} />
       )}
     </div>
   );
 }
 
-const DeliveryInformationForm = ({
-  countryCode,
-  lastResult,
-  shippingAddress,
-  email,
-}: Props) => {
+const DeliveryInformationForm = ({ cart, lastResult }: Props) => {
+  const { shipping_address, email } = cart;
   const [form, fields] = useForm<DeliveryInformationType>({
     lastResult: lastResult && !('success' in lastResult) ? lastResult : null,
     defaultValue: {
-      first_name: shippingAddress?.first_name,
-      last_name: shippingAddress?.last_name,
-      address: shippingAddress?.address_1,
-      city: shippingAddress?.city,
-      phone: shippingAddress?.phone,
-      postal_code: shippingAddress?.postal_code,
-      province: shippingAddress?.province,
+      first_name: shipping_address?.first_name,
+      last_name: shipping_address?.last_name,
+      address: shipping_address?.address_1,
+      city: shipping_address?.city,
+      phone: shipping_address?.phone,
+      postal_code: shipping_address?.postal_code,
+      province: shipping_address?.province,
       email,
     },
   });
-
-  // useEffect(() => {
-  //   if (lastResult && 'success' in lastResult) {
-  //     form.reset();
-  //   }
-  // }, [lastResult]);
 
   return (
     <Form method='POST' {...getFormProps(form)}>
@@ -83,7 +77,7 @@ const DeliveryInformationForm = ({
         readOnly
         name='country_code'
         // need to lowercase for the shipping address
-        value={countryCode.toLocaleLowerCase()}
+        value={shipping_address?.country_code!.toLocaleLowerCase()}
       />
       <input type='text' hidden readOnly name='country' value='Philippines' />
       <div>

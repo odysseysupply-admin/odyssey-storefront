@@ -73,7 +73,7 @@ export default function ProductPage() {
         price: formatAmount({
           countryCode,
           currencyCode,
-          amount: amount / 100,
+          amount: amount,
         }),
         stocks: inventory_quantity || 0,
         stockStatus: getStockStatus(inventory_quantity || 0),

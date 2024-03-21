@@ -23,7 +23,7 @@ const Product = ({
   const calc_prices = variants?.map((v: PricedVariant) =>
     v.calculated_price ? v.calculated_price : 0
   );
-  const price = Number(calc_prices ? Math.min(...calc_prices) : 0) / 100;
+  const price = Number(calc_prices ? Math.min(...calc_prices) : 0);
   const titleURL = title.replace(/\s+/g, '-').toLowerCase();
   return (
     <Link

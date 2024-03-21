@@ -73,7 +73,7 @@ export const CartItem = ({ item, currencyCode, countryCode }: Props) => {
               {formatAmount({
                 countryCode,
                 currencyCode,
-                amount: item.unit_price / 100,
+                amount: item.unit_price,
               })}
             </p>
             <p className='text-slate-600'>Variant: {item.description}</p>
@@ -106,7 +106,7 @@ export const CartItem = ({ item, currencyCode, countryCode }: Props) => {
         {formatAmount({
           countryCode,
           currencyCode,
-          amount: (item.subtotal || 0) / 100,
+          amount: item.subtotal || 0,
         })}
       </td>
     </tr>

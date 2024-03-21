@@ -86,7 +86,7 @@ export const CartSummary = ({
             {formatAmount({
               countryCode,
               currencyCode,
-              amount: subTotal / 100,
+              amount: subTotal,
             })}
           </p>
         </div>
@@ -103,7 +103,7 @@ export const CartSummary = ({
             {formatAmount({
               countryCode,
               currencyCode,
-              amount: (taxTotal ?? 0) / 100,
+              amount: taxTotal ?? 0,
             })}
           </p>
         </div>
@@ -115,7 +115,7 @@ export const CartSummary = ({
           {formatAmount({
             countryCode,
             currencyCode,
-            amount: total / 100,
+            amount: total,
           })}
         </p>
       </div>
