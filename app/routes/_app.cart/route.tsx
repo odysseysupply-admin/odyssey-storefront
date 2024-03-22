@@ -23,6 +23,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   };
 };
 
+// TODO SORT ITEMS
+
 export default function Cart() {
   const { cart } = useLoaderData<typeof loader>();
 

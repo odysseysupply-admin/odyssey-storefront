@@ -37,10 +37,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   };
 };
 
-//TODO: OPTIONS CURRENTLY HARDCODED
-//TODO: PRICE CURRENTLY HARDCODED
-//TODO: FIX VARIANTS AUTO
-
+// TODO: INVENTORY NOT SYNCING WITH ITEMS IN CART
 export const VariantStatus = ({ stocks }: { stocks: number }) => {
   if (stocks <= 10)
     return <p className='text-red-600 mb-2'>FEW STOCKS LEFT!!!</p>;
@@ -61,6 +58,7 @@ export default function ProductPage() {
   const { title, images, thumbnail, variants, description } = product;
   const productImages = [thumbnail, ...images!.map((img) => img.url)];
 
+  console.log(product);
   const { productVariants, productVariantsKeys } = getProductVariants(
     variants as unknown as ProductVariant[],
     currencyCode,

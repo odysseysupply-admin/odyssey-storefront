@@ -68,18 +68,18 @@ export default function Navbar() {
       </Link>
 
       {/* Desktop Menu */}
-      <nav className='hidden lg:block'>
+      <nav>
         <ul className='flex gap-8'>
           {NavLinks.map(({ name, link }) => {
             return (
-              <li key={name} className='tracking-tight'>
+              <li key={name} className='tracking-tight hidden lg:block'>
                 <Link to={link}>{name}</Link>
               </li>
             );
           })}
 
           {/* Search Icon */}
-          <li>
+          <li className='hidden lg:block'>
             <img src='/icons/search.svg' alt='search icon' />
           </li>
 
@@ -91,21 +91,6 @@ export default function Navbar() {
           {/* Shopping Cart */}
           <li>
             <ShoppingCart />
-          </li>
-        </ul>
-      </nav>
-
-      {/* Mobile Menu Extension */}
-      <nav className='lg:hidden'>
-        <ul className='flex gap-2'>
-          {/* Account Icon */}
-          <li>
-            <img src='/icons/user-round.svg' alt='account icon' width={32} />
-          </li>
-
-          {/* Shopping Cart */}
-          <li>
-            <ShoppingCart width={32} />
           </li>
         </ul>
       </nav>

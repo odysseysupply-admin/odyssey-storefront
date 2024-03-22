@@ -37,7 +37,3 @@ export const getProductVariants = (
 
   return { productVariants, productVariantsKeys: Object.keys(productVariants) };
 };
-
-export const VariantStatus = (stocks: number) => {
-  if (stocks > 10) return;
-};
