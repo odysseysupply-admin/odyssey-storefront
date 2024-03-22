@@ -13,3 +13,7 @@ export const formatAmount = ({
     currency: currencyCode,
   }).format(amount / 100);
 };
+
+export const sluggifyTitle = (title: string) => {
+  return title.replace(/\s+/g, '-').toLowerCase();
+};

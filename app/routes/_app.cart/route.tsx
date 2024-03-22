@@ -15,11 +15,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     const cart = await getCart(cookie.cart_id);
     return {
       cart,
+      countryCode: cookie.country_code,
+      currencyCode: cookie.currency_code,
     };
   }
 
   return {
     cart: null,
+    countryCode: cookie.country_code,
+    currencyCode: cookie.currency_code,
   };
 };
 
@@ -30,8 +34,8 @@ export default function Cart() {
 
   if (!cart || (cart?.items && cart.items.length === 0))
     return (
-      <section className='h-[100vh] px-4'>
-        <div className='w-full h-full flex flex-col items-center mt-24'>
+      <section className='h-[100vh] px-4 mt-24'>
+        <div className='w-full h-full flex flex-col items-center '>
           <img
             src='/img/empty-cart.svg'
             alt=''
@@ -59,7 +63,7 @@ export default function Cart() {
   const { name: countryCode, currency_code: currencyCode } = region;
 
   return (
-    <section className='max-w-7xl mx-auto mt-32 mb-48'>
+    <section className='max-w-7xl mx-auto mt-16 mb-48'>
       <div className='grid lg:grid-cols-[1fr_360px] mt-24 px-4'>
         <div className='mb-8 lg:mb-0 lg:mr-4'>
           <h2 className='text-xl font-bold mb-4'>Cart Details</h2>

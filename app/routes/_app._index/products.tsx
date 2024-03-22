@@ -1,6 +1,6 @@
 import type { PricedProduct, PricedVariant } from '@medusajs/client-types';
 import { Link } from '@remix-run/react';
-import { formatAmount } from '~/lib/products';
+import { formatAmount, sluggifyTitle } from '~/lib/products';
 
 type Props = {
   products: PricedProduct[];
@@ -24,7 +24,7 @@ const Product = ({
     v.calculated_price ? v.calculated_price : 0
   );
   const price = Number(calc_prices ? Math.min(...calc_prices) : 0);
-  const titleURL = title.replace(/\s+/g, '-').toLowerCase();
+  const titleURL = sluggifyTitle(title);
   return (
     <Link
       to={title ? `/product/${titleURL}?id=${id}` : '/'}
