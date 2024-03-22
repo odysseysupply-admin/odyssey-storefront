@@ -59,11 +59,11 @@ export function ProductCarousel({ productImages }: Props) {
             <CarouselItem
               key={index}
               onClick={() => onThumbClick(index)}
-              className='basis-1/3 max-h-[150px] border border-slate-300 rounded-lg mx-2 p-2 cursor-pointer'>
+              className='basis-1/3 max-h-[150px] mx-2 max-w-[200px] cursor-pointer'>
               <img
                 src={imgURL}
                 alt='Product Images'
-                className='w-full h-full object-contain md:object-contain px-4'
+                className='w-full h-full object-contain md:object-contain '
               />
             </CarouselItem>
           ))}

@@ -6,14 +6,7 @@ export type ProductVariants = {
     variantId: string;
     price: string;
     stocks: number;
-    stockStatus: string;
   };
-};
-
-const getStockStatus = (stock: number) => {
-  if (stock === 0) return 'SOLD OUT';
-  if (stock > 0 && stock <= 10) return 'FEW STOCKS LEFT';
-  return `${stock}PCS AVAILABLE STOCKS`;
 };
 
 export const getProductVariants = (
@@ -38,10 +31,13 @@ export const getProductVariants = (
           amount: amount,
         }),
         stocks: inventory_quantity || 0,
-        stockStatus: getStockStatus(inventory_quantity || 0),
       },
     };
   }, {});
 
   return { productVariants, productVariantsKeys: Object.keys(productVariants) };
+};
+
+export const VariantStatus = (stocks: number) => {
+  if (stocks > 10) return;
 };
