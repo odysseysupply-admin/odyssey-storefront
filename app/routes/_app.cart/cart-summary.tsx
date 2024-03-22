@@ -91,12 +91,6 @@ export const CartSummary = ({
           </p>
         </div>
 
-        {/* <div className='flex justify-between items-center '>
-          <p>Shipping</p>
-
-          <p>1000</p>
-        </div> */}
-
         <div className='flex justify-between items-center '>
           <p>Taxes</p>
           <p>

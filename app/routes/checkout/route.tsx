@@ -27,7 +27,7 @@ import { CheckoutNavbar } from '~/routes/checkout/checkout-navbar';
 import { DeliveryInformation } from '~/routes/checkout/delivery-information';
 import { PaymentInformation } from '~/routes/checkout/payment-information';
 import { ShippingInformation } from '~/routes/checkout/shipping_information';
-import { STEPS } from '~/routes/checkout/utils';
+import { STEPS, type lastResultType } from '~/routes/checkout/utils';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const cookieHeader = request.headers.get('Cookie');
@@ -79,10 +79,10 @@ export default function Checkout() {
               'refundable_amount' | 'refunded_total'
             >
           }
-          lastResult={lastResult}
+          lastResult={lastResult as unknown as lastResultType}
         />
         <ShippingInformation
-          shippingMethod={cart.shipping_methods[0].shipping_option_id}
+          shippingMethod={cart.shipping_methods[0]?.shipping_option_id}
           showForm={STEPS.SHIPPING_INFORMATION === searchParams.get('step')}
           shippingOptions={shippingOptions as unknown as ShippingOption[]}
           currencyCode={cart.region.currency_code}

@@ -18,7 +18,6 @@ export function ProductCarousel({ productImages }: Props) {
 
   const onThumbClick = useCallback(
     (index: number) => {
-      console.log(index);
       if (!mainApi || !thumbApi) return;
       mainApi.scrollTo(index);
     },

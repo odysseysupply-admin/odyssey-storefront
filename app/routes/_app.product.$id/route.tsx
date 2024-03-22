@@ -58,7 +58,6 @@ export default function ProductPage() {
   const { title, images, thumbnail, variants, description } = product;
   const productImages = [thumbnail, ...images!.map((img) => img.url)];
 
-  console.log(product);
   const { productVariants, productVariantsKeys } = getProductVariants(
     variants as unknown as ProductVariant[],
     currencyCode,

@@ -1,9 +1,9 @@
 import type { LineItem } from '@medusajs/client-types';
-import { useFetcher } from '@remix-run/react';
+import { Link, useFetcher } from '@remix-run/react';
 import { useState } from 'react';
 import { QuantityInput } from '~/components/quantity-input';
 import { Button } from '~/components/ui/button';
-import { formatAmount } from '~/lib/products';
+import { formatAmount, sluggifyTitle } from '~/lib/products';
 
 type Props = {
   item: LineItem;
@@ -11,6 +11,7 @@ type Props = {
   countryCode: string;
 };
 
+// TODO: add pending ui
 const LineItemQuantityInput = ({
   variantStock,
   itemQuantity,
@@ -62,11 +63,16 @@ export const CartItem = ({ item, currencyCode, countryCode }: Props) => {
       {/* Item Details */}
       <td className='pr-2 '>
         <div className='p-2 pr-0 flex items-center '>
-          <img
-            src='/img/shirt1.jpg'
-            alt='item thumbnail'
-            className='rounded-lg border-[1.5px] w-[64px] h-[64px] md:w-[96px] md:h-[96px] p-1'
-          />
+          <Link
+            to={`/product/${sluggifyTitle(item.title)}?id=${
+              item.variant.product_id
+            }&variant=${item.variant.title}`}>
+            <img
+              src='/img/shirt1.jpg'
+              alt='item thumbnail'
+              className='rounded-lg border-[1.5px] w-[64px] h-[64px] md:w-[96px] md:h-[96px] p-1'
+            />
+          </Link>
           <div className='ml-2 self-start mt-2 tracking-tight flex flex-col justify-center md:self-center leading-none '>
             <p className='text-lg font-bold'>{item.title}</p>
             <p className='text-slate-600'>

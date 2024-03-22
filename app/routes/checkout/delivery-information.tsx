@@ -1,25 +1,16 @@
-import {
-  getFormProps,
-  getInputProps,
-  useForm,
-  type SubmissionResult,
-} from '@conform-to/react';
+import { getFormProps, getInputProps, useForm } from '@conform-to/react';
 import type { Cart } from '@medusajs/client-types';
 import { Form, useSearchParams } from '@remix-run/react';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { DeliveryInformationType } from '~/lib/types';
-import { STEPS } from '~/routes/checkout/utils';
+import { STEPS, lastResultType } from '~/routes/checkout/utils';
 
 export type Props = {
   showForm: boolean;
   cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
-  lastResult:
-    | SubmissionResult<string[]>
-    | { success: boolean }
-    | null
-    | undefined;
+  lastResult: lastResultType;
 };
 
 export function DeliveryInformation(props: Props) {

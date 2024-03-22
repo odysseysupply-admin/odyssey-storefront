@@ -69,7 +69,7 @@ export default function Navbar() {
 
       {/* Desktop Menu */}
       <nav>
-        <ul className='flex gap-8'>
+        <ul className='flex gap-8 items-center'>
           {NavLinks.map(({ name, link }) => {
             return (
               <li key={name} className='tracking-tight hidden lg:block'>

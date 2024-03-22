@@ -22,8 +22,6 @@ export function ShippingInformation({
   showForm,
   shippingMethod = '',
 }: Props) {
-  console.log(shippingOptions);
-  console.log(shippingMethod);
   const [selectedOption, setSelectedOption] = useState(shippingMethod !== '');
   const [, setSearchParams] = useSearchParams();
 
