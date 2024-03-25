@@ -111,7 +111,7 @@ export default function ShoppingCart({ width }: Props) {
               emptyCart ? 'h-[300px]' : 'max-h-[500px]'
             }`}
             align='end'
-            sideOffset={27}>
+            sideOffset={25}>
             {emptyCart ? (
               <div className='h-full'>
                 <h2 className='text-xl text-center font-bold mb-16'>Cart</h2>
@@ -154,9 +154,12 @@ export default function ShoppingCart({ width }: Props) {
                 </div>
                 {!inCartRoute && (
                   <Link to={'/cart'}>
-                    <Button className='w-full'>Go to Cart</Button>
+                    <Button className='w-full mb-2'>Go to Cart</Button>
                   </Link>
                 )}
+                <Link to={'/checkout'}>
+                  <Button className='w-full'>Proceed to Checkout</Button>
+                </Link>
               </div>
             )}
           </PopoverContent>

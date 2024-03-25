@@ -11,6 +11,7 @@ import {
 import { formatAmount } from '~/lib/products';
 
 type Props = {
+  shippingTotal?;
   subTotal?: number;
   taxTotal?: number | null;
   total?: number;
@@ -21,6 +22,7 @@ type Props = {
 // TODO: CLEAN UP CODE LIKE CART SUMMARY CHECKOUT
 
 export const CartSummary = ({
+  shippingTotal = 0,
   subTotal = 0,
   taxTotal = 0,
   total = 0,
@@ -89,6 +91,17 @@ export const CartSummary = ({
               countryCode,
               currencyCode,
               amount: subTotal,
+            })}
+          </p>
+        </div>
+
+        <div className='flex justify-between items-center '>
+          <p>Shipping</p>
+          <p>
+            {formatAmount({
+              countryCode,
+              currencyCode,
+              amount: shippingTotal ?? 0,
             })}
           </p>
         </div>

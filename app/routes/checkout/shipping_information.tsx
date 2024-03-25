@@ -1,4 +1,4 @@
-import type { PricedShippingOption } from '@medusajs/client-types';
+import type { Cart, PricedShippingOption } from '@medusajs/client-types';
 import { Form, useSearchParams } from '@remix-run/react';
 import { useState } from 'react';
 import { Button } from '~/components/ui/button';
@@ -8,73 +8,103 @@ import { formatAmount } from '~/lib/products';
 import { STEPS } from '~/routes/checkout/utils';
 
 export type Props = {
+  cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
   shippingOptions: PricedShippingOption[];
-  countryCode: string;
-  currencyCode: string;
   showForm: boolean;
-  shippingMethod?: string;
 };
 
 export function ShippingInformation({
+  cart,
   shippingOptions,
-  currencyCode,
-  countryCode,
   showForm,
-  shippingMethod = '',
 }: Props) {
-  const [selectedOption, setSelectedOption] = useState(shippingMethod !== '');
+  console.log(cart);
+  const {
+    region: { name: countryCode, currency_code: currencyCode },
+    shipping_methods: shippingMethod,
+  } = cart;
+
+  const defaultShippingMethod = shippingMethod[0];
+  const { shipping_option: { name = '', amount = 0 } = { name } } =
+    defaultShippingMethod;
+
+  const [selectedOption, setSelectedOption] = useState(
+    Boolean(defaultShippingMethod?.shipping_option_id)
+  );
   const [, setSearchParams] = useSearchParams();
 
-  if (!showForm)
-    return (
-      <div>
-        Hello World
-        <Button
-          onClick={() =>
-            setSearchParams((prev) => {
-              prev.set('step', STEPS.SHIPPING_INFORMATION);
-              return prev;
-            })
-          }>
-          Edit
-        </Button>
-      </div>
-    );
   return (
-    <div>
-      <Form method='POST'>
-        <input
-          type='text'
-          hidden
-          readOnly
-          value={STEPS.SHIPPING_INFORMATION}
-          name='step'
-        />
-        <RadioGroup
-          defaultValue={shippingMethod}
-          name='optionId'
-          required
-          onChange={() => setSelectedOption(true)}>
-          {shippingOptions.map((option) => (
-            <div
-              className='flex items-center space-x-2 cursor-pointer'
-              key={option.id}>
-              <RadioGroupItem value={option.id} id={option.name} />
-              <Label htmlFor={option.name} className='flex'>
-                <p>{option.name}</p>-
-                <p>
-                  {formatAmount({
-                    countryCode,
-                    currencyCode,
-                    amount: option.amount ?? 0,
-                  })}
-                </p>
-              </Label>
-            </div>
-          ))}
-        </RadioGroup>
-        <Button disabled={!selectedOption}>Continue to Payment</Button>
-      </Form>
+    <div className='mb-10 border-b border-slate-400 pb-8'>
+      <div className='flex justify-between'>
+        <h2 className='text-2xl font-bold mb-4 flex gap-4'>
+          Shipping Method
+          {!showForm && <img src='/icons/check.svg' alt='check' />}
+        </h2>
+        {!showForm && (
+          <Button
+            variant='link'
+            className='text-blue-600 text-md p-0'
+            onClick={() =>
+              setSearchParams((prev) => {
+                prev.set('step', STEPS.SHIPPING_INFORMATION);
+                return prev;
+              })
+            }>
+            Edit
+          </Button>
+        )}
+      </div>
+      {showForm ? (
+        <Form method='POST'>
+          <input
+            type='text'
+            hidden
+            readOnly
+            value={STEPS.SHIPPING_INFORMATION}
+            name='step'
+          />
+          <RadioGroup
+            className='mb-4'
+            defaultValue={defaultShippingMethod?.shipping_option_id}
+            name='optionId'
+            required
+            onChange={() => setSelectedOption(true)}>
+            {shippingOptions.map((option) => (
+              <div
+                className='flex items-center space-x-2 cursor-pointer border-2 px-4 py-6 rounded-lg'
+                key={option.id}>
+                <RadioGroupItem value={option.id} id={option.name} />
+                <Label
+                  htmlFor={option.name}
+                  className='flex justify-between w-full'>
+                  <p>{option.name}</p>
+                  <p>
+                    {formatAmount({
+                      countryCode,
+                      currencyCode,
+                      amount: option.amount ?? 0,
+                    })}
+                  </p>
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+          <Button disabled={!selectedOption}>Continue to Payment</Button>
+        </Form>
+      ) : (
+        <div className='text-slate-700'>
+          <h2 className='font-bold mb-2'>Method</h2>
+          <p>
+            {name} (
+            {formatAmount({
+              countryCode,
+              currencyCode,
+              amount: amount ?? 0,
+            })}
+            )
+          </p>
+        </div>
+      )}
     </div>
   );
 }

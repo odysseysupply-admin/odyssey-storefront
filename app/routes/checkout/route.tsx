@@ -67,40 +67,32 @@ export default function Checkout() {
     }
   }, []);
 
+  // TODO: MOVE THIS
+  const propCart = cart as unknown as Omit<
+    Cart,
+    'refundable_amount' | 'refunded_total'
+  >;
+
   return (
     <div>
       <CheckoutNavbar />
-      <section className='mx-4'>
+      <section className='mx-4 md:mx-12 lg:mx-0'>
         <div className='grid grid-cols-1 lg:grid-cols-[1fr_416px] content-container gap-x-40 py-12 max-w-7xl mx-auto'>
           <div>
             <DeliveryInformation
               showForm={STEPS.DELIVERY_INFORMATION === searchParams.get('step')}
-              cart={
-                cart as unknown as Omit<
-                  Cart,
-                  'refundable_amount' | 'refunded_total'
-                >
-              }
+              cart={propCart}
               lastResult={lastResult as unknown as lastResultType}
             />
             <ShippingInformation
-              shippingMethod={cart.shipping_methods[0]?.shipping_option_id}
+              cart={propCart}
               showForm={STEPS.SHIPPING_INFORMATION === searchParams.get('step')}
               shippingOptions={shippingOptions as unknown as ShippingOption[]}
-              currencyCode={cart.region.currency_code}
-              countryCode={cart.region.name}
             />
             <PaymentInformation />
           </div>
           {/* Cart Summary */}
-          <CartSummaryCheckout
-            cart={
-              cart as unknown as Omit<
-                Cart,
-                'refundable_amount' | 'refunded_total'
-              >
-            }
-          />
+          <CartSummaryCheckout cart={propCart} />
         </div>
       </section>
     </div>

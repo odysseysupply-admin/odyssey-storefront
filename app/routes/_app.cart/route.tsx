@@ -98,6 +98,7 @@ export default function Cart() {
           </table>
         </div>
         <CartSummary
+          shippingTotal={cart.shipping_total}
           subTotal={cart.subtotal}
           taxTotal={cart.tax_total}
           total={cart.total}
