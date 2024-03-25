@@ -8,6 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '~/components/ui/popover';
+import { sortLineItemsByDateAdded } from '~/lib/cart';
 import { formatAmount, sluggifyTitle } from '~/lib/products';
 type Props = {
   width?: number;
@@ -30,11 +31,9 @@ export default function ShoppingCart({ width }: Props) {
     undefined
   );
 
-  const cartItems =
-    fetcher.data?.cart?.items.sort(
-      (a, b) =>
-        new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf()
-    ) || [];
+  const cartItems = sortLineItemsByDateAdded(
+    fetcher.data?.cart?.items as LineItem[]
+  );
 
   const emptyCart = cartItems.length === 0;
   const totalCartItems = emptyCart

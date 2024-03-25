@@ -2,6 +2,7 @@ import type { LineItem } from '@medusajs/client-types';
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
 import { Button } from '~/components/ui/button';
+import { sortLineItemsByDateAdded } from '~/lib/cart';
 import { medusa_cookie } from '~/lib/cookies';
 import { deleteLineItem, getCart, updateLineItem } from '~/lib/medusa.server';
 import { CartItem } from '~/routes/_app.cart/cart-item';
@@ -26,8 +27,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     currencyCode: cookie.currency_code,
   };
 };
-
-// TODO SORT ITEMS
 
 export default function Cart() {
   const { cart } = useLoaderData<typeof loader>();
@@ -62,6 +61,10 @@ export default function Cart() {
   const { items, region } = cart;
   const { name: countryCode, currency_code: currencyCode } = region;
 
+  const sortedLineItems = sortLineItemsByDateAdded(
+    items as unknown as LineItem[]
+  );
+
   return (
     <section className='max-w-7xl mx-auto mt-16 mb-48'>
       <div className='grid lg:grid-cols-[1fr_360px] mt-24 px-4'>
@@ -83,7 +86,7 @@ export default function Cart() {
               </tr>
             </thead>
             <tbody>
-              {items.map((item) => (
+              {sortedLineItems.map((item) => (
                 <CartItem
                   key={item.id}
                   item={item as unknown as LineItem}
