@@ -1,6 +1,7 @@
 import type { Cart, LineItem } from '@medusajs/client-types';
 import { Link, useFetcher, useLocation } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
+import { ButtonLoadingSpinner } from '~/components/button-loading-spinner';
 import { Button } from '~/components/ui/button';
 import {
   Popover,
@@ -166,13 +167,15 @@ export default function ShoppingCart({ width }: Props) {
   );
 }
 
-// TODO: add delete method
 type CartItemProps = {
   item: LineItem;
   countryCode: string;
   currencyCode: string;
 };
 const CartItem = ({ item, currencyCode, countryCode }: CartItemProps) => {
+  const fetcher = useFetcher();
+  const isDeleting =
+    fetcher.state === 'loading' || fetcher.state === 'submitting';
   return (
     <div className='grid grid-cols-[64px_1fr_100px] md:grid-cols-[100px_1fr_100px] gap-4 mb-8'>
       <Link
@@ -192,13 +195,24 @@ const CartItem = ({ item, currencyCode, countryCode }: CartItemProps) => {
         <p className='text-sm text-slate-700 mb-[2px]'>
           Quantity: {item.quantity}
         </p>
-        <Button
-          size='sm'
-          variant='link'
-          className='items-start gap-1 px-0 h-[20px] text-slate-700'>
-          <img src='/icons/trash-2.svg' alt='' className='h-4 w-4' />
-          Remove
-        </Button>
+        <fetcher.Form method='DELETE' action='/cart'>
+          <input
+            type='text'
+            name='lineItemId'
+            readOnly
+            hidden
+            value={item.id}
+          />
+          <Button
+            type='submit'
+            disabled={isDeleting}
+            size='sm'
+            variant='link'
+            className='items-start gap-1 px-0 h-[20px] text-slate-700'>
+            <img src='/icons/trash-2.svg' alt='' className='h-4 w-4' />
+            {isDeleting ? <ButtonLoadingSpinner /> : 'Remove'}
+          </Button>
+        </fetcher.Form>
       </div>
       <p className='font-bold text-slate-700'>
         {formatAmount({

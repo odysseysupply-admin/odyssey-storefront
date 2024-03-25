@@ -124,6 +124,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
 
     case 'DELETE': {
+      console.log('lineItemId', data.lineItemId);
       await deleteLineItem(cookie.cart_id, data.lineItemId as string);
       return { ok: true };
     }

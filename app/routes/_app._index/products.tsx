@@ -37,9 +37,7 @@ const Product = ({
         />
       </div>
       <div className='text-center'>
-        <h3 className='underline  text-lg font-bold'>
-          {title || 'Medusa Mangum Opus'}
-        </h3>
+        <h3 className='underline  text-lg font-bold'>{title || ''}</h3>
         <p className='tracking-wider text-stone-800'>
           {formatAmount({
             countryCode,
