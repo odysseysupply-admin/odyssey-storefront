@@ -80,7 +80,7 @@ export default function ShoppingCart({ width }: Props) {
       timedOpen();
     }
 
-    if (fetcher.data?.cart.items) {
+    if (fetcher.data?.cart?.items) {
       previous.current = true;
     }
   }, [fetcher.data]);

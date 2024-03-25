@@ -1,4 +1,4 @@
-import { Link } from '@remix-run/react';
+import type { Cart } from '@medusajs/client-types';
 import { useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
@@ -11,26 +11,20 @@ import {
 import { formatAmount } from '~/lib/products';
 
 type Props = {
-  subTotal?: number;
-  taxTotal?: number | null;
-  total?: number;
-  countryCode: string;
-  currencyCode: string;
+  cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
 };
 
-// TODO: CLEAN UP CODE LIKE CART SUMMARY CHECKOUT
-
-export const CartSummary = ({
-  subTotal = 0,
-  taxTotal = 0,
-  total = 0,
-  currencyCode,
-  countryCode,
-}: Props) => {
+export const CartSummaryCheckout = ({ cart }: Props) => {
+  const {
+    subtotal: subTotal,
+    tax_total: taxTotal,
+    total,
+    region: { name: countryCode, currency_code: currencyCode },
+  } = cart;
   const [applyCode, setApplyCode] = useState(false);
   return (
     <div>
-      <h2 className='text-xl font-bold mb-4'>Summary</h2>
+      <h2 className='text-2xl font-bold mb-4'>Cart Details</h2>
       <div className='border-b border-slate-200 pb-4 px-4 mb-4'>
         <div className='flex items-center mb-2 gap-2'>
           <Button
@@ -115,10 +109,6 @@ export const CartSummary = ({
           })}
         </p>
       </div>
-
-      <Link to='/checkout'>
-        <Button className='w-full'>Go to checkout</Button>
-      </Link>
     </div>
   );
 };

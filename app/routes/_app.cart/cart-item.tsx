@@ -11,7 +11,6 @@ type Props = {
   countryCode: string;
 };
 
-// TODO: add pending ui
 const LineItemQuantityInput = ({
   variantStock,
   itemQuantity,

@@ -23,6 +23,7 @@ import {
   DeliveryInformationSchema,
   DeliveryInformationType,
 } from '~/lib/types';
+import { CartSummaryCheckout } from '~/routes/checkout/cart-summary-checkout';
 import { CheckoutNavbar } from '~/routes/checkout/checkout-navbar';
 import { DeliveryInformation } from '~/routes/checkout/delivery-information';
 import { PaymentInformation } from '~/routes/checkout/payment-information';
@@ -49,7 +50,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function Checkout() {
   const lastResult = useActionData<typeof action>();
   const { cart, shippingOptions } = useLoaderData<typeof loader>();
-  console.log(cart);
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
@@ -70,25 +70,38 @@ export default function Checkout() {
   return (
     <div>
       <CheckoutNavbar />
-      <section>
-        <DeliveryInformation
-          showForm={STEPS.DELIVERY_INFORMATION === searchParams.get('step')}
-          cart={
-            cart as unknown as Omit<
-              Cart,
-              'refundable_amount' | 'refunded_total'
-            >
-          }
-          lastResult={lastResult as unknown as lastResultType}
-        />
-        <ShippingInformation
-          shippingMethod={cart.shipping_methods[0]?.shipping_option_id}
-          showForm={STEPS.SHIPPING_INFORMATION === searchParams.get('step')}
-          shippingOptions={shippingOptions as unknown as ShippingOption[]}
-          currencyCode={cart.region.currency_code}
-          countryCode={cart.region.name}
-        />
-        <PaymentInformation />
+      <section className='mx-4'>
+        <div className='grid grid-cols-1 lg:grid-cols-[1fr_416px] content-container gap-x-40 py-12 max-w-7xl mx-auto'>
+          <div>
+            <DeliveryInformation
+              showForm={STEPS.DELIVERY_INFORMATION === searchParams.get('step')}
+              cart={
+                cart as unknown as Omit<
+                  Cart,
+                  'refundable_amount' | 'refunded_total'
+                >
+              }
+              lastResult={lastResult as unknown as lastResultType}
+            />
+            <ShippingInformation
+              shippingMethod={cart.shipping_methods[0]?.shipping_option_id}
+              showForm={STEPS.SHIPPING_INFORMATION === searchParams.get('step')}
+              shippingOptions={shippingOptions as unknown as ShippingOption[]}
+              currencyCode={cart.region.currency_code}
+              countryCode={cart.region.name}
+            />
+            <PaymentInformation />
+          </div>
+          {/* Cart Summary */}
+          <CartSummaryCheckout
+            cart={
+              cart as unknown as Omit<
+                Cart,
+                'refundable_amount' | 'refunded_total'
+              >
+            }
+          />
+        </div>
       </section>
     </div>
   );
