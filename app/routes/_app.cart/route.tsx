@@ -1,12 +1,12 @@
-import type { LineItem } from '@medusajs/client-types';
+import type { Cart, LineItem } from '@medusajs/client-types';
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
+import { CartSummary } from '~/components/cart-summary';
 import { Button } from '~/components/ui/button';
 import { sortLineItemsByDateAdded } from '~/lib/cart';
 import { medusa_cookie } from '~/lib/cookies';
 import { deleteLineItem, getCart, updateLineItem } from '~/lib/medusa.server';
 import { CartItem } from '~/routes/_app.cart/cart-item';
-import { CartSummary } from '~/routes/_app.cart/cart-summary';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const cookieHeader = request.headers.get('Cookie');
@@ -98,12 +98,12 @@ export default function Cart() {
           </table>
         </div>
         <CartSummary
-          shippingTotal={cart.shipping_total}
-          subTotal={cart.subtotal}
-          taxTotal={cart.tax_total}
-          total={cart.total}
-          currencyCode={currencyCode}
-          countryCode={countryCode}
+          cart={
+            cart as unknown as Omit<
+              Cart,
+              'refundable_amount' | 'refunded_total'
+            >
+          }
         />
       </div>
     </section>

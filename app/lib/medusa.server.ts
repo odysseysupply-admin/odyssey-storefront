@@ -12,6 +12,9 @@ const medusa = new Medusa({
   maxRetries: 3,
 });
 
+// TODO MOVE TO SEPARATE FILES AND FOLDER
+// TODO ERROR HANDLING FOR API CALLS
+
 // PRODUCTS
 export const getProductsList = async () => {
   const { products } = await medusa.products.list({
@@ -184,6 +187,60 @@ export const addShippingMethod = async (
 
   if (!cart) {
     throw new Error('Unable to add shopping option');
+  }
+
+  return cart;
+};
+
+// DISCOUNT CODES
+export const addDiscountCode = async (cartId: string, code: string) => {
+  const cart = medusa.carts.update(cartId, {
+    discounts: [
+      {
+        code,
+      },
+    ],
+  });
+
+  if (!cart) {
+    throw new Error('Unable to apply discount code.');
+  }
+
+  return cart;
+};
+
+export const removeDiscountCode = async (cartId: string, code: string) => {
+  const cart = medusa.carts.deleteDiscount(cartId, code);
+
+  if (!cart) {
+    throw new Error('Unable to remove discount code.');
+  }
+
+  return cart;
+};
+
+// DISCOUNT CODES
+export const addGiftCard = async (cartId: string, code: string) => {
+  const cart = medusa.carts.update(cartId, {
+    discounts: [
+      {
+        code,
+      },
+    ],
+  });
+
+  if (!cart) {
+    throw new Error('Unable to apply discount code.');
+  }
+
+  return cart;
+};
+
+export const removeGiftCard = async (cartId: string, code: string) => {
+  const cart = medusa.carts.deleteDiscount(cartId, code);
+
+  if (!cart) {
+    throw new Error('Unable to remove discount code.');
   }
 
   return cart;

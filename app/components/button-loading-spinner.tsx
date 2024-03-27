@@ -1,4 +1,6 @@
-export const ButtonLoadingSpinner = () => {
+type Props = { hideText?: boolean };
+
+export const ButtonLoadingSpinner = ({ hideText = false }: Props) => {
   return (
     <>
       <div role='status'>
@@ -19,7 +21,7 @@ export const ButtonLoadingSpinner = () => {
         </svg>
         <span className='sr-only'>Loading...</span>
       </div>
-      Please wait...
+      {!hideText && 'Please wait...'}
     </>
   );
 };

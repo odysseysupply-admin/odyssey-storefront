@@ -12,6 +12,7 @@ import {
   useSearchParams,
 } from '@remix-run/react';
 import { useEffect } from 'react';
+import { CartSummary } from '~/components/cart-summary';
 import { medusa_cookie } from '~/lib/cookies';
 import {
   addShippingMethod,
@@ -23,7 +24,6 @@ import {
   DeliveryInformationSchema,
   DeliveryInformationType,
 } from '~/lib/types';
-import { CartSummaryCheckout } from '~/routes/checkout/cart-summary-checkout';
 import { CheckoutNavbar } from '~/routes/checkout/checkout-navbar';
 import { DeliveryInformation } from '~/routes/checkout/delivery-information';
 import { PaymentInformation } from '~/routes/checkout/payment-information';
@@ -92,7 +92,7 @@ export default function Checkout() {
             <PaymentInformation />
           </div>
           {/* Cart Summary */}
-          <CartSummaryCheckout cart={propCart} />
+          <CartSummary showItems cart={propCart} />
         </div>
       </section>
     </div>
