@@ -63,11 +63,18 @@ export const CartSummary = ({ cart, showItems = false }: Props) => {
     if (isDiscountApplied) setCodeInput('gift');
   }, [isDiscountApplied]);
 
-  const removeDiscountCode = (code: string) => {
+  const removeCode = (
+    code: string,
+    path = '/discount-codes',
+    codes: { code: string }[] = []
+  ) => {
     const formData = new FormData();
+    if (path !== '/discount-codes') {
+      formData.append('codes', JSON.stringify(codes));
+    }
     formData.append('code', code);
     deleteFetcher.submit(formData, {
-      action: '/discount-codes',
+      action: path,
       method: 'DELETE',
     });
   };
@@ -82,6 +89,8 @@ export const CartSummary = ({ cart, showItems = false }: Props) => {
   return (
     <div>
       <h2 className='text-2xl font-bold mb-4'>Cart Details</h2>
+
+      {/* DISCOUNT AND GIFT CARD CODE */}
       <div className='border-b border-slate-200 pb-4 px-4 mb-4'>
         <div className='flex items-center mb-2 gap-2'>
           <Button
@@ -141,21 +150,42 @@ export const CartSummary = ({ cart, showItems = false }: Props) => {
               </fetcher.Form>
             </TabsContent>
             <TabsContent value='gift'>
-              <fetcher.Form method='POST' action='/gift-cards'>
+              <fetcher.Form
+                method='POST'
+                action='/gift-cards'
+                ref={createFormRef}>
                 <div className='flex gap-2'>
-                  <Input className='bg-slate-100' />
-                  <Button variant='secondary' className='shadow-sm'>
-                    Apply
+                  <input
+                    type='text'
+                    readOnly
+                    hidden
+                    value={JSON.stringify(
+                      giftCards.map((g) => ({
+                        code: g.code,
+                      }))
+                    )}
+                    name='codes'
+                  />
+                  <Input className='bg-slate-100' name='code' required />
+                  <Button
+                    variant='secondary'
+                    className='shadow-sm'
+                    disabled={isFetcherSubmitting}>
+                    {isFetcherSubmitting ? (
+                      <ButtonLoadingSpinner hideText />
+                    ) : (
+                      'Apply'
+                    )}
                   </Button>
                 </div>
               </fetcher.Form>
             </TabsContent>
           </Tabs>
         )}
-        {(isDiscountApplied || isGiftCardApplied) && (
-          <div>
+        {isDiscountApplied && (
+          <div className='mb-4'>
             <div className='text-slate-700'>
-              <h3 className='font-bold  mb-2'>Discounts Applied:</h3>
+              <h3 className='font-bold  mb-1'>Discounts applied:</h3>
               <div className='text-sm'>
                 {discounts.map((discount) => (
                   <div
@@ -166,13 +196,61 @@ export const CartSummary = ({ cart, showItems = false }: Props) => {
                       {formatDiscountRule(discount, currencyCode, countryCode)}
                     </p>
                     <Button
-                      onClick={() => removeDiscountCode(discount.code)}
+                      onClick={() => removeCode(discount.code)}
                       disabled={isDeleteFetcherSubmitting}
                       size='sm'
                       variant='ghost'
                       className='items-start gap-1 px-0 h-[20px] text-slate-700'>
                       {isDeleteFetcherSubmitting ? (
-                        <ButtonLoadingSpinner />
+                        <ButtonLoadingSpinner hideText />
+                      ) : (
+                        <img
+                          src='/icons/trash-2.svg'
+                          alt=''
+                          className='h-4 w-4'
+                        />
+                      )}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isGiftCardApplied && (
+          <div>
+            <div className='text-slate-700'>
+              <h3 className='font-bold  mb-1'>Gift card(s) applied:</h3>
+              <div className='text-sm'>
+                {giftCards.map((giftCard) => (
+                  <div
+                    key={giftCard.id}
+                    className='flex justify-between items-center mb-1'>
+                    <p>Code: {giftCard.code} </p>
+                    <p className='font-bold'>
+                      {formatAmount({
+                        countryCode,
+                        currencyCode,
+                        amount: giftCard.value,
+                      })}
+                    </p>
+                    <Button
+                      onClick={() =>
+                        removeCode(
+                          giftCard.code,
+                          '/gift-cards',
+                          giftCards.map((g) => ({
+                            code: g.code,
+                          }))
+                        )
+                      }
+                      disabled={isDeleteFetcherSubmitting}
+                      size='sm'
+                      variant='ghost'
+                      className='items-start gap-1 px-0 h-[20px] text-slate-700'>
+                      {isDeleteFetcherSubmitting ? (
+                        <ButtonLoadingSpinner hideText />
                       ) : (
                         <img
                           src='/icons/trash-2.svg'

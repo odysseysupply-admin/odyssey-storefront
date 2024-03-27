@@ -76,7 +76,7 @@ export default function Checkout() {
   return (
     <div>
       <CheckoutNavbar />
-      <section className='mx-4 md:mx-12 lg:mx-0'>
+      <section className='mx-4 md:mx-12 xl:mx-0'>
         <div className='grid grid-cols-1 lg:grid-cols-[1fr_416px] content-container gap-x-40 py-12 max-w-7xl mx-auto'>
           <div>
             <DeliveryInformation

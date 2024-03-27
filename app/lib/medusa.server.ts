@@ -220,24 +220,37 @@ export const removeDiscountCode = async (cartId: string, code: string) => {
 };
 
 // DISCOUNT CODES
-export const addGiftCard = async (cartId: string, code: string) => {
+export const addGiftCard = async (
+  cartId: string,
+  code: string,
+  codes: { code: string }[]
+) => {
+  console.log('codes', [...codes, { code }]);
+  console.log('codes - 1', [
+    {
+      code,
+    },
+    { code },
+  ]);
   const cart = medusa.carts.update(cartId, {
-    discounts: [
-      {
-        code,
-      },
-    ],
+    gift_cards: [...codes, { code }],
   });
 
   if (!cart) {
-    throw new Error('Unable to apply discount code.');
+    throw new Error('Unable to apply gift card.');
   }
 
   return cart;
 };
 
-export const removeGiftCard = async (cartId: string, code: string) => {
-  const cart = medusa.carts.deleteDiscount(cartId, code);
+export const removeGiftCard = async (
+  cartId: string,
+  code: string,
+  codes: { code: string }[]
+) => {
+  const cart = medusa.carts.update(cartId, {
+    gift_cards: codes.filter((c) => c.code !== code),
+  });
 
   if (!cart) {
     throw new Error('Unable to remove discount code.');

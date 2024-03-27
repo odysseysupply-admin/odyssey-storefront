@@ -23,8 +23,6 @@ export async function action({ request }: ActionFunctionArgs) {
       return { ok: true };
     }
     default:
-      return;
+      return { ok: true };
   }
-
-  return null;
 }
