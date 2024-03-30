@@ -12,6 +12,7 @@ export type Props = {
   showForm: boolean;
   cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
   lastResult: lastResultType;
+  paymentComplete: boolean;
 };
 
 export function DeliveryInformation(props: Props) {
@@ -34,7 +35,7 @@ export function DeliveryInformation(props: Props) {
           Shipping Address
           {!props.showForm && <img src='/icons/check.svg' alt='check' />}
         </h2>
-        {!props.showForm && (
+        {!props.showForm && !props.paymentComplete && (
           <Button
             variant='link'
             className='text-blue-600 text-md p-0'

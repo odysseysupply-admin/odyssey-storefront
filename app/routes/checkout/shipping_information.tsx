@@ -1,4 +1,8 @@
-import type { Cart, PricedShippingOption } from '@medusajs/client-types';
+import type {
+  Cart,
+  PricedShippingOption,
+  ShippingMethod,
+} from '@medusajs/client-types';
 import { Form, useSearchParams } from '@remix-run/react';
 import { useState } from 'react';
 import { Button } from '~/components/ui/button';
@@ -11,26 +15,32 @@ export type Props = {
   cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
   shippingOptions: PricedShippingOption[];
   showForm: boolean;
+  paymentComplete: boolean;
 };
 
 export function ShippingInformation({
   cart,
   shippingOptions,
   showForm,
+  paymentComplete,
 }: Props) {
-  console.log(cart);
   const {
     region: { name: countryCode, currency_code: currencyCode },
     shipping_methods: shippingMethod,
   } = cart;
 
-  const defaultShippingMethod = shippingMethod[0];
-  const { shipping_option: { name = '', amount = 0 } = { name } } =
-    defaultShippingMethod;
+  const defaultShippingMethod =
+    shippingMethod[0] ??
+    ({ shipping_option: { name: '', amount: 0 } } as Partial<ShippingMethod>);
+
+  const {
+    shipping_option: { name, amount },
+  } = defaultShippingMethod;
 
   const [selectedOption, setSelectedOption] = useState(
     Boolean(defaultShippingMethod?.shipping_option_id)
   );
+
   const [, setSearchParams] = useSearchParams();
 
   return (
@@ -38,9 +48,9 @@ export function ShippingInformation({
       <div className='flex justify-between'>
         <h2 className='text-2xl font-bold mb-4 flex gap-4'>
           Shipping Method
-          {!showForm && <img src='/icons/check.svg' alt='check' />}
+          {!showForm && name && <img src='/icons/check.svg' alt='check' />}
         </h2>
-        {!showForm && (
+        {!showForm && name && !paymentComplete && (
           <Button
             variant='link'
             className='text-blue-600 text-md p-0'
@@ -93,16 +103,20 @@ export function ShippingInformation({
         </Form>
       ) : (
         <div className='text-slate-700'>
-          <h2 className='font-bold mb-2'>Method</h2>
-          <p>
-            {name} (
-            {formatAmount({
-              countryCode,
-              currencyCode,
-              amount: amount ?? 0,
-            })}
-            )
-          </p>
+          {name && (
+            <>
+              <h2 className='font-bold mb-2'>Method</h2>
+              <p>
+                {name} (
+                {formatAmount({
+                  countryCode,
+                  currencyCode,
+                  amount: amount ?? 0,
+                })}
+                )
+              </p>
+            </>
+          )}
         </div>
       )}
     </div>

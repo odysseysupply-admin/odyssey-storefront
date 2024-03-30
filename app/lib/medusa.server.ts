@@ -1,3 +1,4 @@
+import type { Cart, StoreCartsRes } from '@medusajs/client-types';
 import Medusa from '@medusajs/medusa-js';
 import type { DeliveryInformationType } from '~/lib/types';
 
@@ -189,6 +190,8 @@ export const addShippingMethod = async (
     throw new Error('Unable to add shopping option');
   }
 
+  await medusa.carts.createPaymentSessions(cart.id);
+
   return cart;
 };
 
@@ -257,4 +260,51 @@ export const removeGiftCard = async (
   }
 
   return cart;
+};
+
+// PAYMENT INFORMATION
+export const addPaymentMethod = async (
+  cartId: string,
+  paymentProviderId: string
+) => {
+  const _cart = await medusa.carts.retrieve(cartId);
+
+  console.log('cart', _cart);
+  if (_cart.cart?.payment_session) {
+    return _cart as unknown as StoreCartsRes;
+  }
+
+  const cart = await medusa.carts.setPaymentSession(cartId, {
+    provider_id: paymentProviderId,
+  });
+
+  if (!cart) {
+    throw new Error('Unable to set payment method.');
+  }
+
+  return cart;
+};
+
+export const updatePaymentSession = async (cartId: string) => {
+  const _cart = await getCart(cartId);
+
+  if (_cart?.payment_session?.data?.paymentStatus === 'succeeded') {
+    return _cart;
+  }
+
+  const cart = await medusa.carts.updatePaymentSession(
+    cartId,
+    _cart.payment_session.provider_id,
+    {
+      data: {
+        paymentStatus: 'succeeded',
+      },
+    }
+  );
+
+  if (!cart) {
+    throw new Error('Unable to update payment session.');
+  }
+
+  return cart as unknown as Omit<Cart, 'refundable_amount' | 'refunded_total'>;
 };

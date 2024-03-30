@@ -11,14 +11,16 @@ import {
   useLoaderData,
   useSearchParams,
 } from '@remix-run/react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { CartSummary } from '~/components/cart-summary';
 import { medusa_cookie } from '~/lib/cookies';
 import {
+  addPaymentMethod,
   addShippingMethod,
   getCart,
   getShippingOptions,
   updateDeliveryInformation,
+  updatePaymentSession,
 } from '~/lib/medusa.server';
 import {
   DeliveryInformationSchema,
@@ -27,16 +29,26 @@ import {
 import { CheckoutNavbar } from '~/routes/checkout/checkout-navbar';
 import { DeliveryInformation } from '~/routes/checkout/delivery-information';
 import { PaymentInformation } from '~/routes/checkout/payment-information';
+import { ReviewOrder } from '~/routes/checkout/review-order';
 import { ShippingInformation } from '~/routes/checkout/shipping_information';
 import { STEPS, type lastResultType } from '~/routes/checkout/utils';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const { searchParams } = new URL(request.url);
+  const checkoutSuccess = searchParams.get('success') === 'true';
+
   const cookieHeader = request.headers.get('Cookie');
   const cookie = (await medusa_cookie.parse(cookieHeader)) || {};
   const cartId = cookie.cart_id;
+
   if (cartId) {
-    const cart = await getCart(cartId);
     const shippingOptions = await getShippingOptions(cartId);
+
+    if (checkoutSuccess) {
+      await updatePaymentSession(cartId);
+    }
+
+    const cart = await getCart(cartId);
 
     return {
       cart,
@@ -51,9 +63,30 @@ export default function Checkout() {
   const lastResult = useActionData<typeof action>();
   const { cart, shippingOptions } = useLoaderData<typeof loader>();
   const [searchParams, setSearchParams] = useSearchParams();
+  const propCart = cart as unknown as Omit<
+    Cart,
+    'refundable_amount' | 'refunded_total'
+  >;
+  const currentStep = searchParams.get('step');
+  const paymentComplete = useMemo(
+    () => cart?.payment_session?.data?.paymentStatus === 'succeeded',
+    [cart?.payment_session?.data?.paymentStatus]
+  );
 
   useEffect(() => {
-    if (!searchParams.get('step')) {
+    if (currentStep === STEPS.REVIEW_ORDER && paymentComplete) {
+      setSearchParams((prev) => {
+        prev.delete('success');
+        return prev;
+      });
+    }
+
+    if (
+      !currentStep ||
+      (currentStep === STEPS.REVIEW_ORDER && !propCart?.payment_session) ||
+      (currentStep === STEPS.PAYMENT_INFORMATION &&
+        propCart?.shipping_methods.length === 0)
+    ) {
       setSearchParams((prev) => {
         let currStep;
         if (!cart.shipping_address?.first_name) {
@@ -65,13 +98,7 @@ export default function Checkout() {
         return prev;
       });
     }
-  }, []);
-
-  // TODO: MOVE THIS
-  const propCart = cart as unknown as Omit<
-    Cart,
-    'refundable_amount' | 'refunded_total'
-  >;
+  }, [currentStep, paymentComplete]);
 
   return (
     <div>
@@ -80,16 +107,27 @@ export default function Checkout() {
         <div className='grid grid-cols-1 lg:grid-cols-[1fr_416px] content-container gap-x-40 py-12 max-w-7xl mx-auto'>
           <div>
             <DeliveryInformation
-              showForm={STEPS.DELIVERY_INFORMATION === searchParams.get('step')}
+              showForm={STEPS.DELIVERY_INFORMATION === currentStep}
               cart={propCart}
               lastResult={lastResult as unknown as lastResultType}
+              paymentComplete={paymentComplete}
             />
             <ShippingInformation
               cart={propCart}
-              showForm={STEPS.SHIPPING_INFORMATION === searchParams.get('step')}
+              showForm={STEPS.SHIPPING_INFORMATION === currentStep}
               shippingOptions={shippingOptions as unknown as ShippingOption[]}
+              paymentComplete={paymentComplete}
             />
-            <PaymentInformation />
+            <PaymentInformation
+              cart={propCart}
+              showForm={STEPS.PAYMENT_INFORMATION === currentStep}
+              paymentComplete={paymentComplete}
+            />
+
+            <ReviewOrder
+              showForm={STEPS.REVIEW_ORDER === currentStep}
+              checkoutURL={propCart.payment_session?.data?.checkout_url || ''}
+            />
           </div>
           {/* Cart Summary */}
           <CartSummary showItems cart={propCart} />
@@ -131,6 +169,15 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     case STEPS.SHIPPING_INFORMATION: {
       await addShippingMethod(cartId, data.optionId as string);
       return redirect(`/checkout?step=${STEPS.PAYMENT_INFORMATION}`);
+    }
+
+    case STEPS.PAYMENT_INFORMATION: {
+      const { cart } = await addPaymentMethod(
+        cartId,
+        data.paymentProviderId as string
+      );
+
+      return redirect(cart.payment_session.data.checkout_url as string);
     }
 
     default:
