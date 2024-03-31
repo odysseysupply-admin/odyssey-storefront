@@ -17,6 +17,7 @@ import { medusa_cookie } from '~/lib/cookies';
 import {
   addPaymentMethod,
   addShippingMethod,
+  completeCart,
   getCart,
   getShippingOptions,
   updateDeliveryInformation,
@@ -100,12 +101,14 @@ export default function Checkout() {
     }
   }, [currentStep, paymentComplete]);
 
+  console.log({ propCart });
+
   return (
     <div>
       <CheckoutNavbar />
       <section className='mx-4 md:mx-12 xl:mx-0'>
         <div className='grid grid-cols-1 lg:grid-cols-[1fr_416px] content-container gap-x-40 py-12 max-w-7xl mx-auto'>
-          <div>
+          <div className='mb-10'>
             <DeliveryInformation
               showForm={STEPS.DELIVERY_INFORMATION === currentStep}
               cart={propCart}
@@ -124,10 +127,7 @@ export default function Checkout() {
               paymentComplete={paymentComplete}
             />
 
-            <ReviewOrder
-              showForm={STEPS.REVIEW_ORDER === currentStep}
-              checkoutURL={propCart.payment_session?.data?.checkout_url || ''}
-            />
+            <ReviewOrder paymentComplete={paymentComplete} />
           </div>
           {/* Cart Summary */}
           <CartSummary showItems cart={propCart} />
@@ -178,6 +178,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       );
 
       return redirect(cart.payment_session.data.checkout_url as string);
+    }
+
+    case STEPS.REVIEW_ORDER: {
+      const { type } = await completeCart(cartId);
+
+      if (type === 'order') {
+        return redirect('/orders/confirmed/1');
+      }
+
+      return null;
     }
 
     default:

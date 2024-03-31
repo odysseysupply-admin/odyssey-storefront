@@ -308,3 +308,12 @@ export const updatePaymentSession = async (cartId: string) => {
 
   return cart as unknown as Omit<Cart, 'refundable_amount' | 'refunded_total'>;
 };
+
+export const completeCart = async (cartId: string) => {
+  const data = await medusa.carts.complete(cartId);
+  if (!data) {
+    throw new Error('Unable to complete cart.');
+  }
+
+  return data;
+};

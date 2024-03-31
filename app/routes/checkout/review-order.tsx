@@ -1,19 +1,26 @@
-import { Link } from '@remix-run/react';
+import { Form } from '@remix-run/react';
 import { Button } from '~/components/ui/button';
+import { STEPS } from '~/routes/checkout/utils';
 
 type Props = {
-  checkoutURL: string;
-  showForm: boolean;
+  paymentComplete: boolean;
 };
 
-export function ReviewOrder({ showForm, checkoutURL }: Props) {
+export function ReviewOrder({ paymentComplete }: Props) {
   return (
-    <div>
+    <div className='mb-10 border-b border-slate-400 pb-8'>
       <h2 className='text-2xl font-bold mb-4 flex gap-4'>Review Order</h2>
-      {showForm && (
-        <Link to={checkoutURL} target='_blank' rel='noreferrer'>
+      {paymentComplete && (
+        <Form method='POST'>
+          <input
+            type='text'
+            hidden
+            readOnly
+            value={STEPS.REVIEW_ORDER}
+            name='step'
+          />
           <Button>Place Order</Button>
-        </Link>
+        </Form>
       )}
     </div>
   );
